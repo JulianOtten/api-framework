@@ -1,0 +1,29 @@
+{
+    "name": "julian/api-framework",
+    "description": "simple php api framework",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Julian Otten",
+            "email": "juliannottenn@hotmail.com"
+        }
+    ],
+    "require": {
+        "psr/http-message": "^2.0",
+        "pecee/simple-router": "5.4.1.7",
+        "psr/log": "^1.1",
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.10"
+    },
+    "scripts": {
+        "lint": "phpcs . -npsv --tab-width=4 --parallel=100 --ignore=vendor,node_modules,dist --extensions=php --standard=PSR1,PSR12 .",
+        "lint-fix": "phpcbf . -npsv --tab-width=4 --parallel=100 --ignore=vendor,node_modules,dist --extensions=php --standard=PSR1,PSR12 ."
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    }
+}

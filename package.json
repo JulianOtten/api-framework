@@ -1,0 +1,16 @@
+{
+  "name": "php-api",
+  "version": "1.0.0",
+  "description": "simple php api framework, using psr4 through composer",
+  "main": "index.php",
+  "scripts": {
+    "start": "npm run build && docker run -d -p 80:80 --name php-framework -v .:/var/www/html php-framework",
+    "no-build": "docker run -d -p 80:80 --name php-framework -v .:/var/www/html php-framework",
+    "stop": "docker stop php-framework",
+    "build": "docker build -t php-framework .",
+    "lint": "composer run-script lint",
+    "lint-fix": "composer run-script lint-fix"
+  },
+  "author": "Julian Otten",
+  "license": "ISC"
+}
