@@ -9,9 +9,9 @@ class TestMiddleware implements MiddlewareInterface {
 
     public function run(): bool
     {
-        $file = new File(ROOT . "/test.log");
+        $file = new File(ROOT . "/logs/test.log");
         $file->create();
-        $file->write('THIS IS WORKING');
+        $file->write("THIS IS WORKING\n");
         return true;
     }
 }

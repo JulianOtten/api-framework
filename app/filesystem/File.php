@@ -19,7 +19,9 @@ class File
     public function create()
     {
         if(!$this->exists()) {
-            mkdir(dirname($this->path), $this->getPermission(), true);
+            $dir = new Folder(dirname($this->path));
+            $dir->create();
+            $this->write("");
         }
 
         return $this;

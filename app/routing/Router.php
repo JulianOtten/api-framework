@@ -73,7 +73,6 @@ class Router
         return $route;
     }
 
-    #[Middleware(new TestMiddleware())]
     public static function get(string $path, callable|RoutableInterface $callback): Route
     {
         if($callback instanceof RoutableInterface) {

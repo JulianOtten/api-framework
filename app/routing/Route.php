@@ -4,6 +4,7 @@ namespace App\Routing;
 
 use App\Http\Method;
 use App\Http\Request;
+use Exception;
 
 class Route
 {
@@ -33,9 +34,12 @@ class Route
 
         $reflectionClass = new \ReflectionMethod(Router::class, 'get');
         $attributes = $reflectionClass->getAttributes();
+        dd($attributes);
         foreach ($attributes as $attribute) {
             $instance = $attribute->newInstance();
-            $instance->run();
+            if(!$instance->run()) {
+                throw new Exception("fuck you no access");
+            }
         }
 
         $args = [...$args, ...array_values($this->getVariables())];
