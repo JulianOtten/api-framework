@@ -31,17 +31,6 @@ class Route
 
     public function run(...$args)
     {
-
-        $reflectionClass = new \ReflectionMethod(Router::class, 'get');
-        $attributes = $reflectionClass->getAttributes();
-        dd($attributes);
-        foreach ($attributes as $attribute) {
-            $instance = $attribute->newInstance();
-            if(!$instance->run()) {
-                throw new Exception("fuck you no access");
-            }
-        }
-
         $args = [...$args, ...array_values($this->getVariables())];
         return call_user_func($this->callback, ...$args);
     }

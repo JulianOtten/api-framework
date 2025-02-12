@@ -2,7 +2,10 @@
 
 namespace App\Routing;
 
+use App\Filesystem\File;
+use App\Filesystem\Folder;
 use App\Helpers\Helper;
+use Directory;
 
 class RouteLoader
 {
@@ -18,23 +21,15 @@ class RouteLoader
 
     public function loadFiles($path)
     {
-        $files = scandir($path);
-        foreach ($files as $file) {
-            if ($file === "." || $file === "..") {
+        $dir = new Folder($path);
+        foreach($dir->getItems() as $item) 
+        {
+            if($item instanceof File) {
+                require_once $item->getPath();
                 continue;
             }
 
-            $filePath = $path . "/" . $file;
-
-            if (is_dir($filePath)) {
-                self::loadFiles($filePath);
-                continue;
-            }
-
-            // Helper::dd($file);
-            if (strtolower($file) === "route.php") {
-                require_once($filePath);
-            }
+            self::loadFiles($item->getPath());
         }
     }
 }

@@ -51,9 +51,9 @@ class Folder
                 continue;
             }
 
-            $path = $this->path . $item;
+            $path = $this->path . '/' . $item;
 
-            if(is_dir($item)) {
+            if(is_dir($path)) {
                 $return[] = new Folder($path);
                 continue;
             }
@@ -62,7 +62,7 @@ class Folder
 
         }
 
-        return $items;
+        return $return;
     }
 
     public function getPermission()

@@ -11,6 +11,9 @@ use App\Http\ResponseFactory;
 use App\middleware\Middleware;
 use App\middleware\MiddlewareInterface;
 use App\Middleware\TestMiddleware;
+use App\Routing\Attributes\Path;
+use App\Routing\Interfaces\RoutableInterface;
+use ReflectionClass;
 
 class Router
 {
@@ -109,5 +112,27 @@ class Router
     public static function any(string $path, callable $callback): Route
     {
         return self::match($path, $callback, Method::Any);
+    }
+
+    public static function registerController(RoutableInterface $controller)
+    {
+        $reflectionClass = new ReflectionClass($controller);
+
+        $classAttributes = $reflectionClass->getAttributes();
+
+        $path = "";
+        foreach($classAttributes as $attr) {
+            $instance = $attr->newInstance();
+            
+            if($instance instanceof Path)
+            {
+                $path = $instance->path;
+            }
+        }
+
+        $methods = $reflectionClass->getMethods();
+        foreach($methods as $method) {
+
+        }
     }
 }

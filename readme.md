@@ -24,3 +24,24 @@ User extends Modal {
 rework routing to work with attributes instead of a router class itself
 this will allow for middleware implementations
 this also allows for defining which payload we EXPECT and which payload we SEND
+
+
+
+# new idea
+have a resources folder, which is devided in sub folders containing the resource
+this can be auto loaded through vendor autoload
+in the resource folder, you have a resource controller. this will register some key classes you need
+something like routes, seeder, interface etc
+structure might look like:
+- resources
+  - ingredients
+    - ingredientsController - extends base controller
+    - ingredientInterface
+    - ingredientSeeder
+    - ingredientRoutes
+
+the base controller should implement an interface that will have methods to retrieve all these special classes
+if a class is not available, it should be null instead
+
+then in a global app class, we register each resource, only pointing to the resource controller.
+all of this can now be attribute driven (routes get their route attributes, interfaces their database/json attributes, and seeders their respective logic attributes (Like if a seeding job is required or for testing purposes, as a small example))
