@@ -2,14 +2,11 @@
 
 namespace App\Database\Orm;
 
-class AbstractModal 
+class AbstractModal
 {
-
     protected $columns = [];
 
     private function setColumn($columnName, $type, $data)
     {
-        
     }
-
 }

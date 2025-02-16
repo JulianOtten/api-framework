@@ -1,8 +1,7 @@
 <?php
+
 use App\Http\ResponseFactory;
-
 use App\Routing\Router;
-
 
 Router::get('/', function () {
     $response = ResponseFactory::createResponse(json_encode([

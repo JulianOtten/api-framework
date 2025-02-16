@@ -18,7 +18,7 @@ class File
 
     public function create()
     {
-        if(!$this->exists()) {
+        if (!$this->exists()) {
             $dir = new Folder(dirname($this->path));
             $dir->create();
             $this->write("");
@@ -28,9 +28,9 @@ class File
     }
 
     public function delete()
-    {   
+    {
         rmdir($this->path);
-        
+
         return $this;
     }
 
@@ -58,7 +58,7 @@ class File
 
     public function getPermission()
     {
-        if(!$this->exists()) {
+        if (!$this->exists()) {
             return '0777';
         }
 

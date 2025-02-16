@@ -7,10 +7,14 @@ trait Singleton
     private static ?self $instance = null;
 
     // Protected constructor to prevent direct instantiation
-    protected function __construct() {}
+    protected function __construct()
+    {
+    }
 
     // Disable cloning
-    protected function __clone() {}
+    protected function __clone()
+    {
+    }
 
     // Static method to get the single instance
     public static function getInstance(): self

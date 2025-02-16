@@ -22,9 +22,8 @@ class RouteLoader
     public function loadFiles($path)
     {
         $dir = new Folder($path);
-        foreach($dir->getItems() as $item) 
-        {
-            if($item instanceof File) {
+        foreach ($dir->getItems() as $item) {
+            if ($item instanceof File) {
                 require_once $item->getPath();
                 continue;
             }

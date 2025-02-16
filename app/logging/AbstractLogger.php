@@ -6,7 +6,6 @@ use Psr\Log\AbstractLogger as LogAbstractLogger;
 
 abstract class AbstractLogger extends LogAbstractLogger
 {
-    
     protected function interpolate($message, array $context = array())
     {
         // build a replacement array with braces around the context keys
@@ -17,7 +16,7 @@ abstract class AbstractLogger extends LogAbstractLogger
                 $replace['{' . $key . '}'] = $val;
             }
         }
-    
+
         // interpolate replacement values into the message and return
         return strtr($message, $replace);
     }

@@ -8,7 +8,6 @@ class CookieStorage implements StorageInterface
 {
     public function __construct()
     {
-        
     }
 
     public function get(string $key)

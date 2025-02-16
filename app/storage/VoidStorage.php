@@ -8,19 +8,18 @@ use App\Storage\SessionStorage;
  * retrieving items from storage from this class, should never return any data
  * storing data should always pretend it got stored successfully
  */
-class VoidStorage implements StorageInterface {
-
+class VoidStorage implements StorageInterface
+{
     public function __construct()
     {
-        
     }
 
-    public function get(string $key) 
+    public function get(string $key)
     {
         return "";
     }
 
-    public function set(string $key, $data): bool 
+    public function set(string $key, $data): bool
     {
         return true;
     }
@@ -34,11 +33,10 @@ class VoidStorage implements StorageInterface {
     {
         return false;
     }
-
 }
 
 
-use App\Storage\CookieStorage; 
+use App\Storage\CookieStorage;
 
 class Cart
 {
@@ -49,12 +47,12 @@ class Cart
         $this->storage = $storage;
     }
 
-    public function addItem(string $item) 
+    public function addItem(string $item)
     {
         $this->storage->set("item", $item);
     }
 
-    public function getItem() 
+    public function getItem()
     {
         $this->storage->get("item");
     }

@@ -4,8 +4,11 @@ namespace App\Routing\Middleware;
 
 use App\Filesystem\File;
 
-class TestMiddleware implements MiddlewareInterface {
-    public function __construct() {}
+class TestMiddleware implements MiddlewareInterface
+{
+    public function __construct()
+    {
+    }
 
     public function run(): bool
     {

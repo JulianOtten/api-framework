@@ -6,7 +6,6 @@ use StorageInterface;
 
 class StorageLogger extends AbstractLogger
 {
-
     private StorageInterface $storage;
 
     public function __construct(StorageInterface $storage)

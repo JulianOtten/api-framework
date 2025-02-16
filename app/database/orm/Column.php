@@ -2,11 +2,9 @@
 
 namespace App\Database\Orm;
 
-class Column 
+class Column
 {
     public function __construct()
     {
-
     }
-
 }

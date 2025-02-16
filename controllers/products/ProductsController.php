@@ -10,6 +10,5 @@ class ProductsController extends AbstractRouteController
 {
     public function get()
     {
-
     }
 }

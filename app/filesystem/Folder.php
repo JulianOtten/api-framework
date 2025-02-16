@@ -4,7 +4,6 @@ namespace App\Filesystem;
 
 class Folder
 {
-
     private $path;
 
     public function __construct($path)
@@ -19,7 +18,7 @@ class Folder
 
     public function create()
     {
-        if(!$this->exists()) {
+        if (!$this->exists()) {
             mkdir($this->path, $this->getPermission(), true);
         }
 
@@ -27,9 +26,9 @@ class Folder
     }
 
     public function delete()
-    {   
+    {
         rmdir($this->path);
-        
+
         return $this;
     }
 
@@ -46,20 +45,19 @@ class Folder
         $items = scandir($this->path);
 
         $return = [];
-        foreach($items as $item) {
-            if($item == "." || $item == "..") {
+        foreach ($items as $item) {
+            if ($item == "." || $item == "..") {
                 continue;
             }
 
             $path = $this->path . '/' . $item;
 
-            if(is_dir($path)) {
+            if (is_dir($path)) {
                 $return[] = new Folder($path);
                 continue;
             }
 
             $return[] = new File($path);
-
         }
 
         return $return;
@@ -67,11 +65,10 @@ class Folder
 
     public function getPermission()
     {
-        if(!$this->exists()) {
+        if (!$this->exists()) {
             return '0777';
         }
 
         return '0777';
     }
-
 }

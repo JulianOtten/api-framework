@@ -78,7 +78,7 @@ class Router
 
     public static function get(string $path, callable|RoutableInterface $callback): Route
     {
-        if($callback instanceof RoutableInterface) {
+        if ($callback instanceof RoutableInterface) {
             $callback = $callback->get;
         }
         return self::match($path, $callback, Method::Get);
@@ -121,18 +121,16 @@ class Router
         $classAttributes = $reflectionClass->getAttributes();
 
         $path = "";
-        foreach($classAttributes as $attr) {
+        foreach ($classAttributes as $attr) {
             $instance = $attr->newInstance();
-            
-            if($instance instanceof Path)
-            {
+
+            if ($instance instanceof Path) {
                 $path = $instance->path;
             }
         }
 
         $methods = $reflectionClass->getMethods();
-        foreach($methods as $method) {
-
+        foreach ($methods as $method) {
         }
     }
 }

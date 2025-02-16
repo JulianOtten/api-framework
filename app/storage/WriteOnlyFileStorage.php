@@ -6,8 +6,7 @@ use StorageInterface;
 
 class WriteOnlyFileStorage extends AbstractWriteOnlyStorage implements StorageInterface
 {
-
-    private string $file; 
+    private string $file;
 
     public function __construct($file)
     {
@@ -24,7 +23,7 @@ class WriteOnlyFileStorage extends AbstractWriteOnlyStorage implements StorageIn
     protected function createFile()
     {
         $dir = dirname($this->file);
-        if(!is_dir($dir)) {
+        if (!is_dir($dir)) {
             mkdir($dir, 777, true);
         }
     }

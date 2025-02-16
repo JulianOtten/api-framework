@@ -5,5 +5,7 @@ namespace App\util\Attributes;
 #[\Attribute]
 class ArrayType
 {
-    public function __construct(public string $className) {}
+    public function __construct(public string $className)
+    {
+    }
 }

@@ -11,7 +11,7 @@ class Env
 
     public $dotenv = null;
 
-    public function setup() 
+    public function setup()
     {
         $this->dotenv = Dotenv::createImmutable(ROOT);
         $this->dotenv->load();
@@ -34,7 +34,7 @@ class Env
 
     public function getVariable(string $key, bool $required = true)
     {
-        if($required && !isset($_ENV[strtoupper($key)])) {
+        if ($required && !isset($_ENV[strtoupper($key)])) {
             throw new \Exception($key . " is not set as environment variable");
         }
 

@@ -7,7 +7,8 @@ class Path
 {
     public function __construct(
         public string $path,
-    ) {}
+    ) {
+    }
 
     // public string $path {
     //     get {
