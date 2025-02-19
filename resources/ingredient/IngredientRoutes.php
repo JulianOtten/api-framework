@@ -27,4 +27,10 @@ class IngredientRoutes implements ResourceRoutesInterface
     {
         echo "nice post request";
     }
+
+    #[Path('/{ingredient_id}/recipe/{recipe_id}', Method::Get)]
+    public function withRecipe($ingredientId, $recipeId)
+    {
+        echo sprintf("Ingredients %s with recipe %s", $ingredientId, $recipeId);
+    }
 }
