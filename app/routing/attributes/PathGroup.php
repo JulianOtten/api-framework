@@ -2,14 +2,16 @@
 
 namespace App\Routing\Attributes;
 
-use App\Http\Method;
-
 #[\Attribute]
-class Route
+class PathGroup
 {
     public function __construct(
-        public Method $method,
         public string $path,
     ) {
+    }
+
+    public function getPath()
+    {
+        return $this->path;
     }
 }

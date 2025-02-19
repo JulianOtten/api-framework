@@ -9,13 +9,15 @@ use Resources\Ingredient\IngredientController;
 
 class App
 {
-
-    private $resources = [
-        new IngredientController(),
-    ];
+    private $resources;
 
     public function __construct()
     {
+
+        $this->resources = [
+            new IngredientController(),
+        ];
+
         // very basic setup we need for each call
         $env = Env::getInstance();
         $env->setup();
@@ -30,14 +32,13 @@ class App
 
     private function route()
     {
-        $routeControllers = array_map(function (AbstractResourceController $controller) {
-            return $controller->getController();
+        $routes = array_map(function (AbstractResourceController $controller) {
+            return $controller->getRoutes();
         }, $this->getResources());
 
         // remove null values
-        $routeControllers = array_filter($routeControllers);
+        $routeControllers = array_filter($routes);
 
         $router = new Router($routeControllers);
     }
-
 }

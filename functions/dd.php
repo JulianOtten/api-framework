@@ -1,6 +1,6 @@
 <?php
 
-function dd($data)
+function dd(...$data)
 {
     $trace = debug_backtrace();
 

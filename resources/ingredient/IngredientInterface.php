@@ -2,6 +2,8 @@
 
 namespace Resources\Ingredient;
 
-class IngredientInterface
+use App\Resources\Interfaces\ResourceInterface;
+
+class IngredientInterface implements ResourceInterface
 {
 }

@@ -2,6 +2,11 @@
 
 namespace Resources\Ingredient;
 
-class IngredientSeeder
+use App\Resources\Interfaces\ResourceSeederInterface;
+
+class IngredientSeeder implements ResourceSeederInterface
 {
+    public function create()
+    {
+    }
 }

@@ -35,9 +35,14 @@ class Route
         return call_user_func($this->callback, ...$args);
     }
 
-    public function match(): bool
+    public function match(Method $method): bool
     {
-        $request = Router::getRequest();
+
+        if($method->value !== Method::Any->value && $method->value !== $this->method->value) {
+            return false;
+        }
+
+        $request = new Request();
         $requestUrl = $request->getUri()->getPath();
         $urlSplit = explode("/", $requestUrl);
         $pathSplit = explode("/", $this->getPath());
@@ -61,7 +66,7 @@ class Route
 
     public function getVariables(): array
     {
-        $request = Router::getRequest();
+        $request = new Request();
         $requestUrl = $request->getUri()->getPath();
         $urlSplit = explode("/", $requestUrl);
         $pathSplit = explode("/", $this->getPath());

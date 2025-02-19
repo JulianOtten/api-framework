@@ -12,7 +12,7 @@ class Response extends Message implements ResponseInterface
     private string $reasonPhrase;
 
 
-    public function __construct(int $status = 200, $headers = [], string $body = null, string $reasonPhrase = "")
+    public function __construct(int $status = 200, $headers = [], ?string $body = null, string $reasonPhrase = "")
     {
         parent::__construct();
         $this->statusCode = $status;

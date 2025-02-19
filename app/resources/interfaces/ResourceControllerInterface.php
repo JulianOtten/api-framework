@@ -4,8 +4,7 @@ namespace App\Resources\Interfaces;
 
 interface ResourceControllerInterface
 {
-    private ResourceInterface $interface;
-    private ResourceSeederInterface $seeder;
-    private ResourceControllerInterface $controller;
-    private ResourceRoutesInterface $routes;
+    public ?ResourceInterface $interface { get; }
+    public ?ResourceSeederInterface $seeder { get; }
+    public ?ResourceRoutesInterface $routes { get; }
 }

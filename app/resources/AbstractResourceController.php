@@ -7,31 +7,26 @@ use App\Resources\Interfaces\ResourceInterface;
 use App\Resources\Interfaces\ResourceRoutesInterface;
 use App\Resources\Interfaces\ResourceSeederInterface;
 
-abstract class AbstractResourceController
+abstract class AbstractResourceController implements ResourceControllerInterface
 {
-    private ?ResourceInterface $interface = null;
-    private ?ResourceSeederInterface $seeder = null;
-    private ?ResourceControllerInterface $controller = null;
-    private ?ResourceRoutesInterface $routes = null;
+    public ?ResourceInterface $interface = null;
+    public ?ResourceSeederInterface $seeder = null;
+    public ?ResourceControllerInterface $controller = null;
+    public ?ResourceRoutesInterface $routes = null;
 
     abstract public function __construct();
 
-    public function setInterface(ResourceInterface $interface = null)
+    public function setInterface(?ResourceInterface $interface = null)
     {
         $this->interface = $interface;
     }
 
-    public function setSeeder(ResourceSeederInterface $seeder = null)
+    public function setSeeder(?ResourceSeederInterface $seeder = null)
     {
         $this->seeder = $seeder;
     }
 
-    public function setController(ResourceControllerInterface $controller = null)
-    {
-        $this->controller = $controller;
-    }
-
-    public function setRoutes(ResourceRoutesInterface $routes = null)
+    public function setRoutes(?ResourceRoutesInterface $routes = null)
     {
         $this->routes = $routes;
     }
@@ -44,11 +39,6 @@ abstract class AbstractResourceController
     public function getSeeder(): ?ResourceSeederInterface
     {
         return $this->seeder;
-    }
-
-    public function getController(): ?ResourceControllerInterface
-    {
-        return $this->controller;
     }
 
     public function getRoutes(): ?ResourceRoutesInterface
