@@ -1,6 +1,6 @@
 <?php
 
-use App\Storage\SessionStorage;
+namespace App\Storage;
 
 /**
  * Void class for the StorageInterface
@@ -32,28 +32,5 @@ class VoidStorage implements StorageInterface
     public function update(string $key, $data): bool
     {
         return false;
-    }
-}
-
-
-use App\Storage\CookieStorage;
-
-class Cart
-{
-    public StorageInterface $storage;
-
-    public function __construct(StorageInterface $storage = new SessionStorage())
-    {
-        $this->storage = $storage;
-    }
-
-    public function addItem(string $item)
-    {
-        $this->storage->set("item", $item);
-    }
-
-    public function getItem()
-    {
-        $this->storage->get("item");
     }
 }

@@ -38,7 +38,7 @@ class Route
     public function match(Method $method): bool
     {
 
-        if($method->value !== Method::Any->value && $method->value !== $this->method->value) {
+        if ($method->value !== Method::Any->value && $method->value !== $this->method->value) {
             return false;
         }
 

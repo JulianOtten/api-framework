@@ -33,9 +33,11 @@ class Router
 
         foreach ($reflectionClass->getMethods() as $method) {
             $methodName = $method->getName();
-            $path = $method->getAttributes('App\Routing\Attributes\Path')[0]->newInstance();;
+            $path = $method->getAttributes('App\Routing\Attributes\Path')[0]->newInstance();
+            ;
 
-            $uri = sprintf("/%s/%s/", 
+            $uri = sprintf(
+                "/%s/%s/",
                 trim($group->getPath(), '/'),
                 trim($path->getPath(), '/')
             );
