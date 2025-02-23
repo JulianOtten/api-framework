@@ -6,6 +6,7 @@ use App\Resources\AbstractResourceController;
 use App\Routing\Router;
 use App\Util\Env;
 use Resources\Ingredient\IngredientController;
+use Resources\Recipe\RecipeController;
 
 class App
 {
@@ -16,6 +17,7 @@ class App
 
         $this->resources = [
             new IngredientController(),
+            new RecipeController(),
         ];
 
         // very basic setup we need for each call
