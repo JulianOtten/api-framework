@@ -6,23 +6,22 @@ use App\Database\Orm\Column;
 
 interface ResourceInterface
 {
+    // #[Column(
+    //     type: "varchar",
+    //     length: 30,
+    //     index: "PRIMARY",
+    // )]
+    // public string $id;
 
-    #[Column(
-        type: "varchar",
-        length: 30,
-        index: "PRIMARY",
-    )]
-    public string $id;
+    // #[Column(
+    //     type: "datetime",
+    //     nullable: true,
+    // )]
+    // public string $updatedAt;
 
-    #[Column(
-        type: "datetime",
-        nullable: true,
-    )]
-    public string $updatedAt;
-
-    #[Column(
-        type: "timestamp",
-        default: "current_timestamp"
-    )]
-    public string $createdAt;
+    // #[Column(
+    //     type: "timestamp",
+    //     default: "current_timestamp"
+    // )]
+    // public string $createdAt;
 }

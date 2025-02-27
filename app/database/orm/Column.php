@@ -13,6 +13,6 @@ class Column
         public $default = null,
         public $attributes = [],
         public $nullable = false,
-    ){}
-    
+    ) {
+    }
 }
