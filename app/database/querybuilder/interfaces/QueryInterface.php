@@ -10,4 +10,5 @@ interface QueryInterface
     public function update(): UpdateQueryInterface;
     public function delete(): DeleteQueryInterface;
     public function create(): CreateQueryInterface;
+    public function insert(): InsertQueryInterface;
 }
