@@ -41,6 +41,17 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
 
     public function build(): string
     {
-        return "";
+        $query = [
+            "SELECT",
+            ...$this->columns,
+            "FROM",
+            $this->table,
+            $this->joins,
+            $this->wheres,
+        ];
+
+        $query = array_filter($query);
+
+        return implode(" ", $query);
     }
 }
