@@ -9,7 +9,9 @@
     "stop": "docker stop php-framework",
     "build": "docker build -t php-framework .",
     "lint": "composer run-script lint",
-    "lint-fix": "composer run-script lint-fix"
+    "lint-fix": "composer run-script lint-fix",
+    "line-count": "find . -not -path \"./.env\" -not -path \"./vendor/*\" -not -path \"./.git/*\" -type f -print0 | xargs -0 cat | wc -l",
+    "file-count": "find . -not -path \"./.env\" -not -path \"./vendor/*\" -not -path \"./.git/*\" | wc -l"
   },
   "author": "Julian Otten",
   "license": "ISC"

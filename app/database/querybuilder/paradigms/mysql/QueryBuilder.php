@@ -15,9 +15,9 @@ class QueryBuilder implements QueryInterface
     {
     }
 
-    public function select(): SelectQueryInterface
+    public function select(string|SelectQueryInterface ...$columns): SelectQueryInterface
     {
-        return new SelectQuery();
+        return new SelectQuery(...$columns);
     }
 
     public function update(): UpdateQueryInterface

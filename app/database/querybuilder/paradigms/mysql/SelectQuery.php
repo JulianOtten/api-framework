@@ -15,7 +15,8 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
     use JoinTrait;
 
     protected string $table;
-    protected array $columns = null;
+    protected null|string $alias = null;
+    protected array $columns = [];
 
     public function __construct(string|SelectQueryInterface ...$columns)
     {
@@ -39,19 +40,50 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
         return $this;
     }
 
+    /**
+     * Turn this query into a subquery, and set the alias for this query
+     *
+     * @param string $as
+     * @return SelectQueryInterface
+     */
+    public function as(string $alias): SelectQueryInterface
+    {
+        $this->alias = $alias;
+        return $this;
+    }
+
+    /**
+     * Same as `as()`, but with a clearer name.
+     * `as()` can be used in a more readable syntax, while `alias()` is semantically more correct
+     *
+     * @param string $alias
+     * @return SelectQueryInterface
+     */
+    public function alias(string $alias): SelectQueryInterface
+    {
+        return $this->as($alias);
+    }
+
     public function build(): string
     {
         $query = [
             "SELECT",
-            ...$this->columns,
+            implode(", ", $this->columns),
             "FROM",
             $this->table,
-            $this->joins,
-            $this->wheres,
+            $this->getJoins(),
+            $this->getWheres(),
+            $this->getLimit(),
         ];
 
         $query = array_filter($query);
 
-        return implode(" ", $query);
+        $query = implode(" ", $query);
+
+        if ($this->alias !== null) {
+            $query = "(".$query.") as " . $this->alias;
+        }
+
+        return $query;
     }
 }
