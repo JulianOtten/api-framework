@@ -7,7 +7,6 @@ use InvalidArgumentException;
 
 trait OrderByTrait
 {
-
     protected string $orderBy = "";
 
     public function orderBy(string|SelectQueryInterface $column, string $direction = "ASC"): static

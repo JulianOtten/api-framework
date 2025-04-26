@@ -17,8 +17,8 @@ $builder = QueryBuilderFactory::fromConnection();
 $builder2 = QueryBuilderFactory::fromConnection();
 
 $query = $builder->select(
-    'id', 
-    'systemname', 
+    'id',
+    'systemname',
     'price_excl',
     $builder2->select('SUM(price_excl)')->from('orders_items oi')->where(eq('oi.product_id', 'p.id'))->as('total_sold'),
     'another_column'

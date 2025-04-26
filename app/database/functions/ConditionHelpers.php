@@ -9,42 +9,42 @@ function eq(string $column, mixed $value): Condition
     return new Condition($column, '=', $value);
 }
 
-function lt(string $column, mixed $value): Condition 
+function lt(string $column, mixed $value): Condition
 {
     return new Condition($column, '<', $value);
 }
 
-function gt(string $column, mixed $value): Condition 
+function gt(string $column, mixed $value): Condition
 {
     return new Condition($column, '>', $value);
 }
 
-function in(string $column, array $values): Condition 
+function in(string $column, array $values): Condition
 {
     return new Condition($column, 'IN', $values);
 }
 
-function isNull(string $column): Condition 
+function isNull(string $column): Condition
 {
     return new Condition($column, 'IS', null);
 }
 
-function isNotNull(string $column): Condition 
+function isNotNull(string $column): Condition
 {
     return new Condition($column, 'IS NOT', null);
 }
 
-function lte(string $column, mixed $value): Condition 
+function lte(string $column, mixed $value): Condition
 {
     return new Condition($column, '<=', $value);
 }
 
-function gte(string $column, mixed $value): Condition 
+function gte(string $column, mixed $value): Condition
 {
     return new Condition($column, '>=', $value);
 }
 
-function notEq(string $column, mixed $value): Condition 
+function notEq(string $column, mixed $value): Condition
 {
     return new Condition($column, '!=', $value);
 }

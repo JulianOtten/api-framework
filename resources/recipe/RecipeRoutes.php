@@ -15,6 +15,5 @@ class RecipeRoutes implements ResourceRoutesInterface
     #[Path('', Method::Get)]
     public function list()
     {
-        
     }
 }

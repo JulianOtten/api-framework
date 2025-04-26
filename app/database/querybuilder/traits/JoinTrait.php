@@ -6,7 +6,6 @@ use App\Database\QueryBuilder\Interfaces\SelectQueryInterface;
 
 trait JoinTrait
 {
-
     protected array $joins = [];
 
     public function join(string|SelectQueryInterface $table, string $on)

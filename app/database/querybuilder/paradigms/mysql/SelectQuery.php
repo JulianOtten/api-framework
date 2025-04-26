@@ -4,6 +4,7 @@ namespace App\Database\QueryBuilder\Paradigms\MySQL;
 
 use App\Database\QueryBuilder\Abstract\AbstractQuery;
 use App\Database\QueryBuilder\Interfaces\SelectQueryInterface;
+use App\Database\QueryBuilder\Traits\GroupByTrait;
 use App\Database\QueryBuilder\Traits\JoinTrait;
 use App\Database\QueryBuilder\Traits\LimitTrait;
 use App\Database\QueryBuilder\Traits\OrderByTrait;
@@ -15,6 +16,7 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
     use LimitTrait;
     use JoinTrait;
     use OrderByTrait;
+    use GroupByTrait;
 
     protected string $table;
     protected null|string $alias = null;
@@ -22,7 +24,7 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
 
     public function __construct(string|SelectQueryInterface ...$columns)
     {
-        if(count($columns) == 0) {
+        if (count($columns) == 0) {
             $columns = ['*'];
         }
 
@@ -75,6 +77,7 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
             $this->table,
             $this->getJoins(),
             $this->getWheres(),
+            $this->getGroupBy(),
             $this->getOrderBy(),
             $this->getLimit(),
         ];
@@ -84,7 +87,7 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
         $query = implode(" ", $query);
 
         if ($this->alias !== null) {
-            $query = "(".$query.") as " . $this->alias;
+            $query = "(" . $query . ") as " . $this->alias;
         }
 
         return $query;

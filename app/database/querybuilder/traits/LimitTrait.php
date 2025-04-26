@@ -6,7 +6,6 @@ use App\Database\QueryBuilder\Interfaces\QueryInterface;
 
 trait LimitTrait
 {
-
     protected int $limit;
     protected int $offset;
 
@@ -29,13 +28,13 @@ trait LimitTrait
 
     protected function getLimit()
     {
-        if(empty($this->limit)) {
+        if (empty($this->limit)) {
             return "";
         }
 
         $limit = "LIMIT " . $this->limit;
 
-        if(!empty($this->offset)) {
+        if (!empty($this->offset)) {
             $limit .= ", " . $this->offset;
         }
 

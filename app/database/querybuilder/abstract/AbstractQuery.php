@@ -7,7 +7,6 @@ use Stringable;
 
 abstract class AbstractQuery implements Stringable
 {
-
     protected $query = null;
 
     protected $binds = [
@@ -28,7 +27,7 @@ abstract class AbstractQuery implements Stringable
 
     protected function getBinds()
     {
-        return array_reduce($this->binds, function($acc, $arr) {
+        return array_reduce($this->binds, function ($acc, $arr) {
             return [...$acc, ...$arr];
         }, []);
     }
@@ -36,7 +35,7 @@ abstract class AbstractQuery implements Stringable
     protected function reset()
     {
         $this->query = null;
-        $this->binds = array_map(function($el) {
+        $this->binds = array_map(function ($el) {
             return [];
         }, $this->binds);
     }
@@ -45,5 +44,4 @@ abstract class AbstractQuery implements Stringable
     {
         return $this->build();
     }
-
 }

@@ -7,12 +7,11 @@ use App\Database\QueryBuilder\Interfaces\QueryInterface;
 
 trait WhereTrait
 {
-
     protected array $wheres = [];
 
     public function where(Condition ...$conditions): static
     {
-        $conditions = array_map(function(Condition $condition) {
+        $conditions = array_map(function (Condition $condition) {
             return $condition->get();
         }, $conditions);
 
