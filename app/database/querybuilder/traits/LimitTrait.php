@@ -10,13 +10,18 @@ trait LimitTrait
     protected int $limit;
     protected int $offset;
 
-    public function limit(int $limit): QueryInterface
+    public function limit(int $limit, $offset = null): static
     {
         $this->limit = $limit;
+
+        if (!is_null($offset)) {
+            $this->offset = $offset;
+        }
+
         return $this;
     }
 
-    public function offset(int $offset): QueryInterface
+    public function offset(int $offset): static
     {
         $this->offset = $offset;
         return $this;

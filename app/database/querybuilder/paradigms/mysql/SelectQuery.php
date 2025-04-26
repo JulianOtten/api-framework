@@ -6,6 +6,7 @@ use App\Database\QueryBuilder\Abstract\AbstractQuery;
 use App\Database\QueryBuilder\Interfaces\SelectQueryInterface;
 use App\Database\QueryBuilder\Traits\JoinTrait;
 use App\Database\QueryBuilder\Traits\LimitTrait;
+use App\Database\QueryBuilder\Traits\OrderByTrait;
 use App\Database\QueryBuilder\Traits\WhereTrait;
 
 class SelectQuery extends AbstractQuery implements SelectQueryInterface
@@ -13,6 +14,7 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
     use WhereTrait;
     use LimitTrait;
     use JoinTrait;
+    use OrderByTrait;
 
     protected string $table;
     protected null|string $alias = null;
@@ -73,6 +75,7 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
             $this->table,
             $this->getJoins(),
             $this->getWheres(),
+            $this->getOrderBy(),
             $this->getLimit(),
         ];
 

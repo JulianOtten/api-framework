@@ -14,7 +14,8 @@
         "vlucas/phpdotenv": "^5.6"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "^3.10"
+        "squizlabs/php_codesniffer": "^3.10",
+        "phpunit/phpunit": "^9.6"
     },
     "scripts": {
         "lint": "phpcs . -npsv --tab-width=4 --parallel=100 --ignore=vendor,node_modules,dist --extensions=php --standard=PSR1,PSR12 .",

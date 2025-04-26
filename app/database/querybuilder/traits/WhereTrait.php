@@ -8,7 +8,7 @@ use App\Database\QueryBuilder\Interfaces\QueryInterface;
 trait WhereTrait
 {
 
-    protected array $wheres;
+    protected array $wheres = [];
 
     public function where(Condition ...$conditions): static
     {

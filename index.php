@@ -27,6 +27,8 @@ $query = $builder->select(
 ->join('products_properties_variants ppv', 'p.id = ppv.product_id')
 ->where(gt('p.id', 10), lt('p.id', 50))
 ->and(eq('p.status', 1))
+->orderBy('id', 'DESC')
+->limit(5, 10)
 ->build();
 
 dd($query);

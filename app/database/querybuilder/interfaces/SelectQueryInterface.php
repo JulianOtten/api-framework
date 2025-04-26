@@ -2,8 +2,7 @@
 
 namespace App\Database\QueryBuilder\Interfaces;
 
-interface SelectQueryInterface 
-extends LimitTraitInterface, WhereTraitInterface, JoinTraitInterface
+interface SelectQueryInterface extends LimitTraitInterface, WhereTraitInterface, JoinTraitInterface, OrderByTraitInterface
 {
 
     public function __construct(string|SelectQueryInterface ...$columns);
