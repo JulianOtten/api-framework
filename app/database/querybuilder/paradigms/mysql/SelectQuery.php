@@ -2,7 +2,7 @@
 
 namespace App\Database\QueryBuilder\Paradigms\MySQL;
 
-use App\Database\QueryBuilder\Abstract\AbstractQuery;
+use App\Database\QueryBuilder\Abstraction\AbstractQuery;
 use App\Database\QueryBuilder\Interfaces\SelectQueryInterface;
 use App\Database\QueryBuilder\Traits\GroupByTrait;
 use App\Database\QueryBuilder\Traits\JoinTrait;

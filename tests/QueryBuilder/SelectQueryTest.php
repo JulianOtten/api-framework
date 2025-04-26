@@ -11,7 +11,7 @@ class SelectQueryTest extends TestCase
 {
     public function testSelectQueryBasic()
     {
-        $query = new SelectQuery('id', 'name')->from('users');
+        $query = (new SelectQuery('id', 'name'))->from('users');
 
         $expectedSql = 'SELECT id, name FROM users';
         $this->assertEquals($expectedSql, $query->build());
@@ -19,7 +19,7 @@ class SelectQueryTest extends TestCase
 
     public function testSelectQueryWithWhereCondition()
     {
-        $query = new SelectQuery('id', 'name')
+        $query = (new SelectQuery('id', 'name'))
               ->from('users')
               ->where(eq('id', 1));
 
@@ -29,7 +29,7 @@ class SelectQueryTest extends TestCase
 
     public function testSelectQueryWithMultipleConditions()
     {
-        $query = new SelectQuery('id', 'name')
+        $query = (new SelectQuery('id', 'name'))
               ->from('users')
               ->where(eq('id', 1))
               ->and(eq('status', 'active'));
@@ -40,7 +40,7 @@ class SelectQueryTest extends TestCase
 
     public function testSelectQueryWithOrderBy()
     {
-        $query = new SelectQuery('id', 'name')
+        $query = (new SelectQuery('id', 'name'))
               ->from('users')
               ->orderBy('name', 'ASC');
 
@@ -50,7 +50,7 @@ class SelectQueryTest extends TestCase
 
     public function testSelectQueryWithLimit()
     {
-        $query = new SelectQuery('id', 'name')
+        $query = (new SelectQuery('id', 'name'))
               ->from('users')
               ->limit(10);
 

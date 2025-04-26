@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Database\QueryBuilder\Abstract;
+namespace App\Database\QueryBuilder\Abstraction;
 
 use InvalidArgumentException;
 use Stringable;
