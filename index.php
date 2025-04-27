@@ -4,6 +4,7 @@ use App\App;
 use App\Database\QueryBuilder\Paradigms\MySQL\QueryBuilder;
 use App\Database\QueryBuilder\QueryBuilderFactory;
 
+use function App\Database\QueryBuilder\Functions\ceq;
 use function App\Database\QueryBuilder\Functions\gt;
 use function App\Database\QueryBuilder\Functions\lt;
 use function App\Database\QueryBuilder\Functions\eq;
@@ -16,6 +17,8 @@ require_once "functions/dd.php";
 $builder = QueryBuilderFactory::fromConnection();
 $builder2 = QueryBuilderFactory::fromConnection();
 
+$start = microtime(true);
+
 $query = $builder->select(
     'id',
     'systemname',
@@ -24,9 +27,9 @@ $query = $builder->select(
     'another_column'
 )
 ->from('products p')
-->join('products_properties_variants ppv', eq('p.id', 'ppv.product_id'))
-->leftJoin('products_properties_variants_values ppvv', eq('ppv.id', 'ppvv.product_variant_id'), lt('ppv.id', 10))
-->rightJoin('products_properties_variants ppv', eq('p.id', 'ppv.product_id'))
+->join('products_properties_variants ppv', ceq('p.id', 'ppv.product_id'))
+->leftJoin('products_properties_variants_values ppvv', ceq('ppv.id', 'ppvv.product_variant_id'), lt('ppv.id', 10))
+->rightJoin('products_properties_variants ppv', ceq('p.id', 'ppv.product_id'))
 ->where(gt('p.id', 10), lt('p.id', 50))
 ->and(eq('p.status', 1))
 ->orderBy('id', 'DESC')
@@ -34,6 +37,8 @@ $query = $builder->select(
 
 d($query->getBinds());
 
-dd($query->build());
+d($query->build());
+
+dd(microtime(true) - $start);
 
 $app = new App();

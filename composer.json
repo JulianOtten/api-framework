@@ -19,7 +19,8 @@
     },
     "scripts": {
         "lint": "phpcs . -npsv --tab-width=4 --parallel=100 --ignore=vendor,node_modules,dist --extensions=php --standard=PSR1,PSR12 .",
-        "lint-fix": "phpcbf . -npsv --tab-width=4 --parallel=100 --ignore=vendor,node_modules,dist --extensions=php --standard=PSR1,PSR12 ."
+        "lint-fix": "phpcbf . -npsv --tab-width=4 --parallel=100 --ignore=vendor,node_modules,dist --extensions=php --standard=PSR1,PSR12 .",
+        "test": "vendor/bin/phpunit"
     },
     "autoload": {
         "psr-4": {

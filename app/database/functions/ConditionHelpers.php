@@ -56,12 +56,12 @@ function cin(string $column, string $valueColumn): Condition
 
 function isNull(string $column): Condition
 {
-    return new Condition($column, 'IS', null, false);
+    return new Condition($column, 'IS', 'NULL', false);
 }
 
 function isNotNull(string $column): Condition
 {
-    return new Condition($column, 'IS NOT', null, false);
+    return new Condition($column, 'IS NOT', 'NULL', false);
 }
 
 function lte(string $column, mixed $value): Condition

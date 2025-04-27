@@ -19,7 +19,7 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
      *
      * @var string
      */
-    protected $implodeValue = "\n";
+    protected $implodeValue = "";
 
     /**
      * Variable used for checking if a query is valid
@@ -71,7 +71,7 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
          * () all perenthesis (for sql functions like SUM and COUNT)
          * \s all spaces and white spaces (for column and table aliasses)
          */
-        if (!preg_match('/^[-a-zA-Z0-9_.()\s]+$/', $input)) {
+        if (!preg_match('/^[-a-zA-Z0-9_.()\s*]+$/', $input)) {
             $this->valid = false;
             // throw new InvalidArgumentException("Invalid SQL identifier: $input");
         }
