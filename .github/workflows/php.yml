@@ -20,6 +20,9 @@ jobs:
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
+    - name: Clear Composer cache
+      run: composer clear-cache
+
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v3
@@ -33,10 +36,7 @@ jobs:
       run: composer install --prefer-dist --no-progress --dev
 
     - name: Dump autoloader
-      run: composer dump-autoload
-
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
+      run: composer dump-autoload --optimize
 
     - name: Run test suite
       run: composer run-script test
