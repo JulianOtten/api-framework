@@ -2,6 +2,7 @@
     "name": "julian/api-framework",
     "description": "simple php api framework",
     "type": "project",
+    "license": "proprietary",
     "authors": [
         {
             "name": "Julian Otten",
