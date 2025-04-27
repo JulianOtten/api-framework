@@ -16,45 +16,80 @@ use App\Database\Helpers\Condition;
 
 function eq(string $column, mixed $value): Condition
 {
-    return new Condition($column, '=', $value);
+    return new Condition($column, '=', $value, true);
+}
+
+function ceq(string $column, string $valueColumn): Condition
+{
+    return new Condition($column, '=', $valueColumn, false);
 }
 
 function lt(string $column, mixed $value): Condition
 {
-    return new Condition($column, '<', $value);
+    return new Condition($column, '<', $value, true);
+}
+
+function clt(string $column, string $valueColumn): Condition
+{
+    return new Condition($column, '<', $valueColumn, false);
 }
 
 function gt(string $column, mixed $value): Condition
 {
-    return new Condition($column, '>', $value);
+    return new Condition($column, '>', $value, true);
+}
+
+function cgt(string $column, string $valueColumn): Condition
+{
+    return new Condition($column, '>', $valueColumn, false);
 }
 
 function in(string $column, array $values): Condition
 {
-    return new Condition($column, 'IN', $values);
+    return new Condition($column, 'IN', $values, true);
+}
+
+function cin(string $column, string $valueColumn): Condition
+{
+    return new Condition($column, 'IN', $valueColumn, false);
 }
 
 function isNull(string $column): Condition
 {
-    return new Condition($column, 'IS', null);
+    return new Condition($column, 'IS', null, false);
 }
 
 function isNotNull(string $column): Condition
 {
-    return new Condition($column, 'IS NOT', null);
+    return new Condition($column, 'IS NOT', null, false);
 }
 
 function lte(string $column, mixed $value): Condition
 {
-    return new Condition($column, '<=', $value);
+    return new Condition($column, '<=', $value, true);
+}
+
+function clte(string $column, string $valueColumn): Condition
+{
+    return new Condition($column, '<=', $valueColumn, false);
 }
 
 function gte(string $column, mixed $value): Condition
 {
-    return new Condition($column, '>=', $value);
+    return new Condition($column, '>=', $value, true);
+}
+
+function cgte(string $column, string $valueColumn): Condition
+{
+    return new Condition($column, '>=', $valueColumn, false);
 }
 
 function notEq(string $column, mixed $value): Condition
 {
-    return new Condition($column, '!=', $value);
+    return new Condition($column, '!=', $value, true);
+}
+
+function cnotEq(string $column, string $valueColumn): Condition
+{
+    return new Condition($column, '!=', $valueColumn, false);
 }
