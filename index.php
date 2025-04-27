@@ -24,7 +24,9 @@ $query = $builder->select(
     'another_column'
 )
 ->from('products p')
-->join('products_properties_variants ppv', 'p.id = ppv.product_id')
+->join('products_properties_variants ppv', eq('p.id', 'ppv.product_id'))
+->leftJoin('products_properties_variants_values ppvv', eq('ppv.id', 'ppvv.product_variant_id'), lt('ppv.id', 10))
+->rightJoin('products_properties_variants ppv', eq('p.id', 'ppv.product_id'))
 ->where(gt('p.id', 10), lt('p.id', 50))
 ->and(eq('p.status', 1))
 ->orderBy('id', 'DESC')

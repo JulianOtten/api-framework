@@ -4,6 +4,16 @@ namespace App\Database\QueryBuilder\Functions;
 
 use App\Database\Helpers\Condition;
 
+// function and(Condition ...$condition)
+// {
+    
+// }
+
+// function or(Condition ...$condition)
+// {
+
+// }
+
 function eq(string $column, mixed $value): Condition
 {
     return new Condition($column, '=', $value);

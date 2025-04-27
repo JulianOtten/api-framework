@@ -9,6 +9,16 @@ abstract class AbstractQuery implements Stringable
 {
     protected $query = null;
 
+    /**
+     * Can be overwritten to join query segments with additional information.
+     * Leave blank for query with 0 formatting.
+     * 
+     * @example string "\\n" gives queries newlines between segments, making them more readable
+     *
+     * @var string
+     */
+    protected $implodeValue = "\n";
+
     protected $binds = [
         "wheres" => [],
         "limit" => [],
@@ -38,6 +48,11 @@ abstract class AbstractQuery implements Stringable
         $this->binds = array_map(function ($el) {
             return [];
         }, $this->binds);
+    }
+
+    protected function getImplodeValue(): string
+    {
+        return $this->implodeValue;
     }
 
     public function __toString(): string

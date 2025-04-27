@@ -22,6 +22,9 @@ trait OrderByTrait
 
     public function getOrderBy(): string
     {
-        return sprintf('ODER BY %s', $this->orderBy);
+        if (empty($this->orderBy)) {
+            return "";
+        }
+        return sprintf('ORDER BY %s', $this->orderBy);
     }
 }

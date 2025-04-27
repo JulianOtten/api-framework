@@ -84,7 +84,7 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
 
         $query = array_filter($query);
 
-        $query = implode(" ", $query);
+        $query = implode(" {$this->getImplodeValue()}", $query);
 
         if ($this->alias !== null) {
             $query = "(" . $query . ") as " . $this->alias;
