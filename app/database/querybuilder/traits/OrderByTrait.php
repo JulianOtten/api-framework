@@ -7,7 +7,7 @@ use InvalidArgumentException;
 
 trait OrderByTrait
 {
-    protected string $orderBy = "";
+    protected array $orderBy = [];
 
     public function orderBy(string|SelectQueryInterface $column, string $direction = "ASC"): static
     {
@@ -18,7 +18,7 @@ trait OrderByTrait
 
         $column = $this->sanitize($column);
 
-        $this->orderBy = "{$column} {$direction}";
+        $this->orderBy[] = "{$column} {$direction}";
         return $this;
     }
 
@@ -27,6 +27,6 @@ trait OrderByTrait
         if (empty($this->orderBy)) {
             return "";
         }
-        return sprintf('ORDER BY %s', $this->orderBy);
+        return sprintf('ORDER BY %s', implode(", {$this->getImplodeValue()}", $this->orderBy));
     }
 }

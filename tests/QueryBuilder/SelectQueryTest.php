@@ -99,31 +99,6 @@ class SelectQueryTest extends TestCase
         $this->assertEquals($expectedSql, $query->build());
     }
 
-    // public function testSelectQueryWithHaving()
-    // {
-    //     $query = (new SelectQuery('status', 'COUNT(*) as count'))
-    //         ->from('users')
-    //         ->groupBy('status')
-    //         ->having(gt('count', 10));
-
-    //     $expectedSql = 'SELECT status, COUNT(*) as count FROM users GROUP BY status HAVING count > 10';
-    //     $this->assertEquals($expectedSql, $query->build());
-    // }
-
-    // public function testSelectQueryWithNestedQuery()
-    // {
-    //     $subQuery = (new SelectQuery('id'))
-    //         ->from('admins')
-    //         ->where(eq('role', 'superadmin'));
-
-    //     $query = (new SelectQuery('users.id', 'users.name'))
-    //         ->from('users')
-    //         ->where(in('users.id', $subQuery));
-
-    //     $expectedSql = 'SELECT users.id, users.name FROM users WHERE users.id IN (SELECT id FROM admins WHERE role = "superadmin")';
-    //     $this->assertEquals($expectedSql, $query->build());
-    // }
-
     public function testSelectQueryWithMultipleJoins()
     {
         $query = (new SelectQuery('users.id', 'users.name', 'orders.total', 'products.name as product_name'))
@@ -227,5 +202,209 @@ class SelectQueryTest extends TestCase
             18,
             60, 
         ], $query->getBinds());
+    }
+
+    public function testSelectQueryWithDistinct()
+    {
+        $query = (new SelectQuery('DISTINCT name'))
+            ->from('users');
+
+        $expectedSql = 'SELECT DISTINCT name FROM users';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    public function testSelectQueryWithMultipleGroupBy()
+    {
+        $query = (new SelectQuery('status', 'role', 'COUNT(*) as count'))
+            ->from('users')
+            ->groupBy('status', 'role');
+
+        $expectedSql = 'SELECT status, role, COUNT(*) as count FROM users GROUP BY status, role';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    // public function testSelectQueryWithHavingAndGroupBy()
+    // {
+    //     $query = (new SelectQuery('status', 'COUNT(*) as count'))
+    //         ->from('users')
+    //         ->groupBy('status')
+    //         ->having(gt('count', 5));
+
+    //     $expectedSql = 'SELECT status, COUNT(*) as count FROM users GROUP BY status HAVING count > ?';
+    //     $this->assertEquals($expectedSql, $query->build());
+    //     $this->assertEquals([5], $query->getBinds());
+    // }
+
+    public function testSelectQueryWithSubqueryInSelect()
+    {
+        $subQuery = (new SelectQuery('COUNT(*)'))
+            ->from('orders')
+            ->where(ceq('orders.user_id', 'users.id'));
+
+        $query = (new SelectQuery('id', 'name', $subQuery->as('order_count')))
+            ->from('users');
+
+        $expectedSql = 'SELECT id, name, (SELECT COUNT(*) FROM orders WHERE ( orders.user_id = users.id )) as order_count FROM users';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    // public function testSelectQueryWithSubqueryInWhere()
+    // {
+    //     $subQuery = (new SelectQuery('id'))
+    //         ->from('admins')
+    //         ->where(eq('role', 'superadmin'));
+
+    //     $query = (new SelectQuery('id', 'name'))
+    //         ->from('users')
+    //         ->where(in('id', $subQuery));
+
+    //     $expectedSql = 'SELECT id, name FROM users WHERE ( id IN (SELECT id FROM admins WHERE ( role = ? )) )';
+    //     $this->assertEquals($expectedSql, $query->build());
+    //     $this->assertEquals(['superadmin'], $query->getBinds());
+    // }
+
+    public function testSelectQueryWithMultipleOrderBy()
+    {
+        $query = (new SelectQuery('id', 'name'))
+            ->from('users')
+            ->orderBy('name', 'ASC')
+            ->orderBy('created_at', 'DESC');
+
+        $expectedSql = 'SELECT id, name FROM users ORDER BY name ASC, created_at DESC';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    public function testSelectQueryWithJoinAndAlias()
+    {
+        $query = (new SelectQuery('u.id', 'u.name', 'o.total'))
+            ->from('users u')
+            ->join('orders o', ceq('u.id', 'o.user_id'));
+
+        $expectedSql = 'SELECT u.id, u.name, o.total FROM users u JOIN orders o ON u.id = o.user_id';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    public function testSelectQueryWithComplexJoinConditions()
+    {
+        $query = (new SelectQuery('u.id', 'u.name', 'o.total'))
+            ->from('users u')
+            ->join('orders o', ceq('u.id', 'o.user_id'), gt('o.total', 100));
+
+        $expectedSql = 'SELECT u.id, u.name, o.total FROM users u JOIN orders o ON u.id = o.user_id AND o.total > ?';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([100], $query->getBinds());
+    }
+
+    public function testSelectQueryWithNestedJoins()
+    {
+        $query = (new SelectQuery('u.id', 'u.name', 'p.name as product_name'))
+            ->from('users u')
+            ->join('orders o', ceq('u.id', 'o.user_id'))
+            ->join('products p', ceq('o.product_id', 'p.id'));
+
+        $expectedSql = 'SELECT u.id, u.name, p.name as product_name FROM users u JOIN orders o ON u.id = o.user_id JOIN products p ON o.product_id = p.id';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    public function testSelectQueryWithRawSQL()
+    {
+        $query = (new SelectQuery('id', 'name', 'NOW() as current_time'))
+            ->from('users');
+
+        $expectedSql = 'SELECT id, name, NOW() as current_time FROM users';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    public function testSelectQueryWithEmptyWhere()
+    {
+        $query = (new SelectQuery('id', 'name'))
+            ->from('users');
+
+        $expectedSql = 'SELECT id, name FROM users';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    public function testSelectQueryWithMultipleAliases()
+    {
+        $query = (new SelectQuery('u.id as user_id', 'u.name as user_name', 'o.total as order_total'))
+            ->from('users u')
+            ->join('orders o', ceq('u.id', 'o.user_id'));
+
+        $expectedSql = 'SELECT u.id as user_id, u.name as user_name, o.total as order_total FROM users u JOIN orders o ON u.id = o.user_id';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    /**
+     * The reason this should fail, is because we want to disallow as many 
+     * sql related character as possible to make the change of sql injection
+     * as low as possible
+     *
+     * @return void
+     */
+    public function testSelectQueryWithEscapedIdentifiers()
+    {
+        $query = (new SelectQuery('`id`', '`name`'))
+            ->from('`users`');
+
+        $expectedSql = 'SELECT `id`, `name` FROM `users`';
+        $this->assertEquals("", $query->build());
+    }
+
+    public function testSelectQueryWithBooleanConditions()
+    {
+        $query = (new SelectQuery('id', 'name'))
+            ->from('users')
+            ->where(eq('is_active', true));
+
+        $expectedSql = 'SELECT id, name FROM users WHERE ( is_active = ? )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([true], $query->getBinds());
+    }
+
+    public function testSelectQueryWithNullValuesInWhere()
+    {
+        $query = (new SelectQuery('id', 'name'))
+            ->from('users')
+            ->where(isNull('deleted_at'));
+
+        $expectedSql = 'SELECT id, name FROM users WHERE ( deleted_at IS NULL )';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    public function testSelectQueryWithNotNullValuesInWhere()
+    {
+        $query = (new SelectQuery('id', 'name'))
+            ->from('users')
+            ->where(eq('deleted_at', null));
+
+        $expectedSql = 'SELECT id, name FROM users WHERE ( deleted_at = ? )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([null], $query->getBinds());
+    }
+
+    public function testSelectQueryWithEmptyColumns()
+    {
+        $query = (new SelectQuery())
+            ->from('users');
+
+        $expectedSql = 'SELECT * FROM users';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    public function testSelectQueryWithMultipleSubqueries()
+    {
+        $subQuery1 = (new SelectQuery('COUNT(*)'))
+            ->from('orders')
+            ->where(ceq('orders.user_id', 'users.id'));
+
+        $subQuery2 = (new SelectQuery('SUM(total)'))
+            ->from('orders')
+            ->where(ceq('orders.user_id', 'users.id'));
+
+        $query = (new SelectQuery('id', 'name', $subQuery1->as('order_count'), $subQuery2->as('total_spent')))
+            ->from('users');
+
+        $expectedSql = 'SELECT id, name, (SELECT COUNT(*) FROM orders WHERE ( orders.user_id = users.id )) as order_count, (SELECT SUM(total) FROM orders WHERE ( orders.user_id = users.id )) as total_spent FROM users';
+        $this->assertEquals($expectedSql, $query->build());
     }
 }
