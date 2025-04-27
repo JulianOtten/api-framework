@@ -26,7 +26,8 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
-            "Resources\\": "resources/"
+            "Resources\\": "resources/",
+            "Tests\\": "tests/"
         },
         "files": [
             "app/database/functions/ConditionHelpers.php"
