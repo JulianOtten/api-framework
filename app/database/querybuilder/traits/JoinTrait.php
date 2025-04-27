@@ -37,6 +37,8 @@ trait JoinTrait
 
     protected function setJoin(string $joinType, string|SelectQueryInterface $table, Condition ...$conditions)
     {
+        $table = $this->sanitize($table);
+
         $join = new Join($joinType, $table);
 
         foreach($conditions as $condition) {

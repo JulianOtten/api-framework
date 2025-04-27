@@ -2,10 +2,12 @@
 
 namespace App\Database\QueryBuilder\Abstraction;
 
+use App\Database\QueryBuilder\Interfaces\AbstractQueryInterface;
+use App\Database\QueryBuilder\Interfaces\SelectQueryInterface;
 use InvalidArgumentException;
 use Stringable;
 
-abstract class AbstractQuery implements Stringable
+abstract class AbstractQuery implements Stringable, AbstractQueryInterface
 {
     protected $query = null;
 
@@ -19,12 +21,58 @@ abstract class AbstractQuery implements Stringable
      */
     protected $implodeValue = "\n";
 
+    /**
+     * Variable used for checking if a query is valid
+     * if any input into the query builder does not passt the santize method
+     * it will set this property to false, and return en empty query
+     *
+     * @var boolean
+     */
+    protected $valid = true;
+
     protected $binds = [
         "wheres" => [],
         "limit" => [],
     ];
 
-    abstract protected function build(): string;
+    abstract public function build(): string;
+
+    /**
+     * Validate that unbindable input into the query builder matches a character whitelist
+     * if for some reason this does not match, invalidate the query and return
+     * an empty query string, for security reasons
+     *
+     * @param string $input
+     * @return string
+     */
+    protected function sanitize(string|SelectQueryInterface $input): string 
+    {
+        if (gettype($input) !== "string") {
+            return $input;
+        }
+
+        /**
+         * Allow the following:
+         * - dashes (for column names)
+         * a-zA-Z (all letters, in lower and upper case)
+         * 0-9 all numbers
+         * _ all underscores
+         * . all dots
+         * () all perenthesis (for sql functions like SUM and COUNT)
+         * \s all spaces and white spaces (for column and table aliasses)
+         */
+        if (!preg_match('/^[-a-zA-Z0-9_.()\s]+$/', $input)) {
+            $this->valid = false;
+            // throw new InvalidArgumentException("Invalid SQL identifier: $input");
+        }
+        
+        // double dash is mysql's way of indicating comments, we do NOT want to allow them
+        if (str_contains($input, '--')) {
+            $this->valid = false;
+        }
+
+        return $input;
+    }
 
     protected function setBind($type, $key, $value)
     {

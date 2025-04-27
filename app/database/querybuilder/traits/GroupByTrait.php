@@ -8,6 +8,7 @@ trait GroupByTrait
 
     public function groupBy(string ...$columns): static
     {
+        $columns = array_map(fn($el) => $this->sanitize($el), $columns);
         $this->groupBys = array_merge($this->groupBys, $columns);
         return $this;
     }

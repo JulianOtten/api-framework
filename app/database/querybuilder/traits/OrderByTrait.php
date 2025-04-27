@@ -16,6 +16,8 @@ trait OrderByTrait
             throw new InvalidArgumentException("Argumnent direction must me 'ASC' or 'DESC'");
         }
 
+        $column = $this->sanitize($column);
+
         $this->orderBy = "{$column} {$direction}";
         return $this;
     }

@@ -28,18 +28,20 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
             $columns = ['*'];
         }
 
-        $this->columns = $columns;
+        $this->columns(...$columns);
     }
 
     public function columns(string|SelectQueryInterface ...$columns): SelectQueryInterface
     {
+        $columns = array_map(fn($el) => $this->sanitize($el), $columns);
+
         $this->columns = $columns;
         return $this;
     }
 
     public function from(string $table): SelectQueryInterface
     {
-        $this->table = $table;
+        $this->table = $this->sanitize($table);
 
         return $this;
     }
@@ -52,7 +54,7 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
      */
     public function as(string $alias): SelectQueryInterface
     {
-        $this->alias = $alias;
+        $this->alias = $this->sanitize($alias);
         return $this;
     }
 
@@ -70,6 +72,10 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
 
     public function build(): string
     {
+        if ($this->valid === false) {
+            return "";
+        }
+
         $query = [
             "SELECT",
             implode(", ", $this->columns),
