@@ -16,7 +16,17 @@ trait OrderByTrait
             throw new InvalidArgumentException("Argumnent direction must me 'ASC' or 'DESC'");
         }
 
+        $isSubQuery = false;
+        if ($column instanceof SelectQueryInterface) {
+            $this->setSubQueryBinds($column);
+            $isSubQuery = true;
+        }
+
         $column = $this->sanitize($column);
+
+        if ($isSubQuery) {
+            $column = "({$column})";
+        }
 
         $this->orderBy[] = "{$column} {$direction}";
         return $this;

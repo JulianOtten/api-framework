@@ -100,12 +100,30 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
         }, []);
     }
 
-    protected function reset()
+    protected function setSubQueryBinds(SelectQueryInterface $query): void
+    {
+        $binds = $query->getRawBinds();
+
+        foreach($binds as $type => $values) {
+            foreach($values as $value) {
+                $this->setBind($type, $value);
+            }
+        }
+    }
+
+    public function getRawBinds(): array
+    {
+        return $this->binds;
+    }
+
+    public function reset(): static
     {
         $this->query = null;
         $this->binds = array_map(function ($el) {
             return [];
         }, $this->binds);
+
+        return $this;
     }
 
     protected function getImplodeValue(): string

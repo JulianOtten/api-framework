@@ -33,6 +33,13 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
 
     public function columns(string|SelectQueryInterface ...$columns): SelectQueryInterface
     {
+        foreach($columns as $column) {
+
+            if ($column instanceof SelectQueryInterface) {
+                $this->setSubQueryBinds($column);
+            }
+        }
+
         $columns = array_map(fn($el) => $this->sanitize($el), $columns);
 
         $this->columns = $columns;

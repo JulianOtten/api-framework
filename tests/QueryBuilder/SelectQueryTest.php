@@ -336,7 +336,7 @@ class SelectQueryTest extends TestCase
 
     /**
      * The reason this should fail, is because we want to disallow as many 
-     * sql related character as possible to make the change of sql injection
+     * sql related character as possible to make the chance of sql injection
      * as low as possible
      *
      * @return void
@@ -406,5 +406,156 @@ class SelectQueryTest extends TestCase
 
         $expectedSql = 'SELECT id, name, (SELECT COUNT(*) FROM orders WHERE ( orders.user_id = users.id )) as order_count, (SELECT SUM(total) FROM orders WHERE ( orders.user_id = users.id )) as total_spent FROM users';
         $this->assertEquals($expectedSql, $query->build());
+    }
+
+    public function testSelectQueryWithSubqueryInJoin()
+    {
+        $subQuery = (new SelectQuery('id', 'user_id', 'SUM(total) as total_spent'))
+            ->from('orders')
+            ->groupBy('user_id')
+            ->as('o');
+
+        $query = (new SelectQuery('u.id', 'u.name', 'o.total_spent'))
+            ->from('users u')
+            ->join($subQuery, ceq('u.id', 'o.user_id'));
+
+        $expectedSql = 'SELECT u.id, u.name, o.total_spent FROM users u JOIN (SELECT id, user_id, SUM(total) as total_spent FROM orders GROUP BY user_id) as o ON u.id = o.user_id';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    public function testSelectQueryWithSubqueryInLeftJoin()
+    {
+        $subQuery = (new SelectQuery('id', 'user_id', 'COUNT(*) as order_count'))
+            ->from('orders')
+            ->groupBy('user_id')
+            ->as('o');
+
+        $query = (new SelectQuery('u.id', 'u.name', 'o.order_count'))
+            ->from('users u')
+            ->leftJoin($subQuery, ceq('u.id', 'o.user_id'));
+
+        $expectedSql = 'SELECT u.id, u.name, o.order_count FROM users u LEFT JOIN (SELECT id, user_id, COUNT(*) as order_count FROM orders GROUP BY user_id) as o ON u.id = o.user_id';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    public function testSelectQueryWithSubqueryInRightJoin()
+    {
+        $subQuery = (new SelectQuery('id', 'user_id', 'AVG(total) as avg_spent'))
+            ->from('orders')
+            ->groupBy('user_id')
+            ->as('o');
+
+        $query = (new SelectQuery('u.id', 'u.name', 'o.avg_spent'))
+            ->from('users u')
+            ->rightJoin($subQuery, ceq('u.id', 'o.user_id'));
+
+        $expectedSql = 'SELECT u.id, u.name, o.avg_spent FROM users u RIGHT JOIN (SELECT id, user_id, AVG(total) as avg_spent FROM orders GROUP BY user_id) as o ON u.id = o.user_id';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
+    public function testSelectQueryWithSubqueryInJoinAndWhere()
+    {
+        $subQuery = (new SelectQuery('id', 'user_id', 'SUM(total) as total_spent'))
+            ->from('orders')
+            ->groupBy('user_id')
+            ->as('o');
+
+        $query = (new SelectQuery('u.id', 'u.name', 'o.total_spent'))
+            ->from('users u')
+            ->join($subQuery, ceq('u.id', 'o.user_id'))
+            ->where(gt('o.total_spent', 100));
+
+        $expectedSql = 'SELECT u.id, u.name, o.total_spent FROM users u JOIN (SELECT id, user_id, SUM(total) as total_spent FROM orders GROUP BY user_id) as o ON u.id = o.user_id WHERE ( o.total_spent > ? )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([100], $query->getBinds());
+    }
+
+    public function testSelectQueryWithSubqueryInJoinAndMultipleConditions()
+    {
+        $subQuery = (new SelectQuery('id', 'user_id', 'SUM(total) as total_spent'))
+            ->from('orders')
+            ->groupBy('user_id')
+            ->as('o');
+
+        $query = (new SelectQuery('u.id', 'u.name', 'o.total_spent'))
+            ->from('users u')
+            ->join($subQuery, ceq('u.id', 'o.user_id'))
+            ->where(gt('o.total_spent', 100))
+            ->and(lt('o.total_spent', 500));
+
+        $expectedSql = 'SELECT u.id, u.name, o.total_spent FROM users u JOIN (SELECT id, user_id, SUM(total) as total_spent FROM orders GROUP BY user_id) as o ON u.id = o.user_id WHERE ( o.total_spent > ? ) AND ( o.total_spent < ? )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([100, 500], $query->getBinds());
+    }
+
+    public function testSelectQueryWithSubqueryBindsCombined()
+    {
+        $subQuery1 = (new SelectQuery('SUM(total)'))
+            ->from('orders')
+            ->where(gt('total', 25))
+            ->as('total_spent');
+
+        $subQuery2 = (new SelectQuery('id', 'user_id', 'SUM(total) as total_spent'))
+            ->from('orders')
+            ->where(gt('total', 50))
+            ->groupBy('user_id')
+            ->as('o');
+
+        $query = (new SelectQuery('u.id', 'u.name', 'o.total_spent', $subQuery1))
+            ->from('users u')
+            ->join($subQuery2, ceq('u.id', 'o.user_id'))
+            ->where(gt('o.total_spent', 100));
+
+        $expectedSql = 'SELECT u.id, u.name, o.total_spent, (SELECT SUM(total) FROM orders WHERE ( total > ? )) as total_spent FROM users u JOIN (SELECT id, user_id, SUM(total) as total_spent FROM orders WHERE ( total > ? ) GROUP BY user_id) as o ON u.id = o.user_id WHERE ( o.total_spent > ? )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([25, 50, 100], $query->getBinds());
+    }
+
+    public function testSelectQueryWithOrderBySubQueryWithBind()
+    {
+        $subQuery = (new SelectQuery('COUNT(*)'))
+            ->from('orders')
+            ->where(ceq('orders.user_id', 'users.id'))
+            ->and(gt('orders.total', 200));
+
+        $query = (new SelectQuery('id', 'name'))
+            ->from('users')
+            ->orderBy($subQuery, 'DESC');
+
+        $expectedSql = 'SELECT id, name FROM users ORDER BY (SELECT COUNT(*) FROM orders WHERE ( orders.user_id = users.id ) AND ( orders.total > ? )) DESC';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([200], $query->getBinds());
+    }
+
+    public function testSelectQueryWithNestedSubqueries()
+    {
+        $innerSubQuery1 = (new SelectQuery('SUM(total)'))
+            ->from('payments')
+            ->where(gt('payments.amount', 50));
+
+        $innerSubQuery2 = (new SelectQuery('COUNT(*)'))
+            ->from('reviews')
+            ->where(ceq('reviews.user_id', 'users.id'));
+
+        $subQuery1 = (new SelectQuery($innerSubQuery1->as('total_payments')))
+            ->from('orders')
+            ->where(ceq('orders.user_id', 'users.id'));
+
+        $subQuery2 = (new SelectQuery($innerSubQuery2->as('review_count')))
+            ->from('users');
+
+        $joinSubQuery = (new SelectQuery('id', 'user_id', $subQuery1->as('total_orders')))
+            ->from('orders')
+            ->groupBy('user_id')
+            ->as('o');
+
+        $query = (new SelectQuery('u.id', 'u.name', $subQuery2->as('nested_review_count'), 'o.total_orders'))
+            ->from('users u')
+            ->join($joinSubQuery, ceq('u.id', 'o.user_id'))
+            ->where(gt('o.total_orders', 100));
+
+        $expectedSql = 'SELECT u.id, u.name, (SELECT (SELECT COUNT(*) FROM reviews WHERE ( reviews.user_id = users.id )) as review_count FROM users) as nested_review_count, o.total_orders FROM users u JOIN (SELECT id, user_id, (SELECT (SELECT SUM(total) FROM payments WHERE ( payments.amount > ? )) as total_payments FROM orders WHERE ( orders.user_id = users.id )) as total_orders FROM orders GROUP BY user_id) as o ON u.id = o.user_id WHERE ( o.total_orders > ? )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([50, 100], $query->getBinds());
     }
 }

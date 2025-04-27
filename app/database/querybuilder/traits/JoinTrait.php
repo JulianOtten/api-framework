@@ -37,6 +37,10 @@ trait JoinTrait
 
     protected function setJoin(string $joinType, string|SelectQueryInterface $table, Condition ...$conditions)
     {
+        if ($table instanceof SelectQueryInterface) {
+            $this->setSubQueryBinds($table);
+        }
+        
         $table = $this->sanitize($table);
 
         $join = new Join($joinType, $table);
