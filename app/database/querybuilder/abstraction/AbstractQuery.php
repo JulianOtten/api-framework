@@ -117,4 +117,37 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
     {
         return $this->build();
     }
+
+    public function dump(): string
+    {
+        $query = $this->build();
+
+        // $query = str_replace(
+        //     array_fill(0, count($this->getBinds()), '?'), 
+        //     array_map(fn($bind) => sprintf("\"%s\"", $bind), $this->getBinds()), 
+        //     $query
+        // );
+
+        $query = preg_replace_callback(
+            '/\?/', // Match any "?" placeholder
+            function($matches) {
+                // Get the next bind value from the list
+                static $bindIndex = 0; // Keep track of which bind we are replacing
+                $bindValue = $this->getBinds()[$bindIndex];
+        
+                // Increment the bind index for the next replacement
+                $bindIndex++;
+        
+                if (is_numeric($bindValue)) {
+                    return $bindValue;
+                }
+
+                // Return the bind value wrapped in quotes (escaping is done here)
+                return sprintf("\"%s\"", addslashes($bindValue));
+            },
+            $query
+        );
+
+        dd($query);
+    }
 }
