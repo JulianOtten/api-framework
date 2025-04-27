@@ -13,14 +13,14 @@ trait LimitTrait
     {
         $this->limit = $limit;
         $this->setBind('limit', $limit);
-        
+
         if (!is_null($offset)) {
             $this->offset($offset);
         }
-        
+
         return $this;
     }
-    
+
     public function offset(int $offset): static
     {
         $this->setBind('limit', $offset);
