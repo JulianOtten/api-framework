@@ -35,6 +35,9 @@ trait WhereTrait
 
     protected function getWheres(): string
     {
+        if (empty($this->wheres)) {
+            return "";
+        }
         return "WHERE " . implode(" AND ", $this->wheres);
     }
 }
