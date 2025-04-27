@@ -6,7 +6,7 @@ use App\Database\Helpers\Condition;
 
 // function and(Condition ...$condition)
 // {
-    
+
 // }
 
 // function or(Condition ...$condition)

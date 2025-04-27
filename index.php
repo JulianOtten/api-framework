@@ -20,7 +20,7 @@ $query = $builder->select(
     'id',
     'systemname',
     'price_excl',
-    $builder2->select('SUM(price_excl)')->from('orders_items oi')->where(eq('oi.product_id', 'p.id'))->as('total_sold'),
+    // $builder2->select('SUM(price_excl)')->from('orders_items oi')->where(eq('oi.product_id', 'p.id'))->as('total_sold'),
     'another_column'
 )
 ->from('products p')
@@ -30,9 +30,10 @@ $query = $builder->select(
 ->where(gt('p.id', 10), lt('p.id', 50))
 ->and(eq('p.status', 1))
 ->orderBy('id', 'DESC')
-->limit(5, 10)
-->build();
+->limit(5, 10);
 
-dd($query);
+d($query->getBinds());
+
+dd($query->build());
 
 $app = new App();

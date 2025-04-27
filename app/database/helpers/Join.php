@@ -48,4 +48,15 @@ class Join
 
         return implode(sprintf(" %s ", trim($implodeValue)), $conditions);
     }
+
+    public function getBindValues(): array
+    {
+        $conditions = array_map(function (Condition $condition) {
+            return $condition->getValue();
+        }, $this->conditions);
+
+        $conditions = array_values(array_filter($conditions));
+
+        return $conditions;
+    }
 }

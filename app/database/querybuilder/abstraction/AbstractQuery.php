@@ -14,7 +14,7 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
     /**
      * Can be overwritten to join query segments with additional information.
      * Leave blank for query with 0 formatting.
-     * 
+     *
      * @example string "\\n" gives queries newlines between segments, making them more readable
      *
      * @var string
@@ -30,8 +30,18 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
      */
     protected $valid = true;
 
+    /**
+     * All types of binds we have in a query
+     * this is ordered by in which order they appear in the query
+     * that way the user can enter the logic in which ever way they want, but the values
+     * will always line up correctly
+     *
+     * @var array
+     */
     protected $binds = [
-        "wheres" => [],
+        "join" => [],
+        "where" => [],
+        "having" => [],
         "limit" => [],
     ];
 
@@ -45,7 +55,7 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
      * @param string $input
      * @return string
      */
-    protected function sanitize(string|SelectQueryInterface $input): string 
+    protected function sanitize(string|SelectQueryInterface $input): string
     {
         if (gettype($input) !== "string") {
             return $input;
@@ -65,7 +75,7 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
             $this->valid = false;
             // throw new InvalidArgumentException("Invalid SQL identifier: $input");
         }
-        
+
         // double dash is mysql's way of indicating comments, we do NOT want to allow them
         if (str_contains($input, '--')) {
             $this->valid = false;
@@ -74,16 +84,16 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
         return $input;
     }
 
-    protected function setBind($type, $key, $value)
+    protected function setBind($type, $value)
     {
         if (!isset($this->binds[$type])) {
             throw new InvalidArgumentException("$type is not a valid bind option");
         }
 
-        $this->binds[$type][$key] = $value;
+        $this->binds[$type][] = $value;
     }
 
-    protected function getBinds()
+    public function getBinds()
     {
         return array_reduce($this->binds, function ($acc, $arr) {
             return [...$acc, ...$arr];

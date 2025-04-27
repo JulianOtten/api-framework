@@ -11,6 +11,14 @@ trait WhereTrait
 
     public function where(Condition ...$conditions): static
     {
+        foreach ($conditions as $condition) {
+            if (!$condition->getBind()) {
+                continue;
+            }
+
+            $this->setBind('where', $condition->getValue());
+        }
+
         $conditions = array_map(function (Condition $condition) {
             return $condition->get();
         }, $conditions);

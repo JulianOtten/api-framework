@@ -41,8 +41,12 @@ trait JoinTrait
 
         $join = new Join($joinType, $table);
 
-        foreach($conditions as $condition) {
+        foreach ($conditions as $condition) {
             $join->setConditions($condition);
+
+            if ($condition->getBind()) {
+                $this->setBind('join', $condition->getValue());
+            }
         }
 
         $this->joins[] = $join;

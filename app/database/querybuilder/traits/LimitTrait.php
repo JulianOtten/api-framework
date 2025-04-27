@@ -12,16 +12,18 @@ trait LimitTrait
     public function limit(int $limit, $offset = null): static
     {
         $this->limit = $limit;
-
+        $this->setBind('limit', $limit);
+        
         if (!is_null($offset)) {
-            $this->offset = $offset;
+            $this->offset($offset);
         }
-
+        
         return $this;
     }
-
+    
     public function offset(int $offset): static
     {
+        $this->setBind('limit', $offset);
         $this->offset = $offset;
         return $this;
     }
@@ -32,10 +34,10 @@ trait LimitTrait
             return "";
         }
 
-        $limit = "LIMIT " . $this->limit;
+        $limit = "LIMIT ?";
 
         if (!empty($this->offset)) {
-            $limit .= ", " . $this->offset;
+            $limit .= ", ?";
         }
 
         return $limit;
