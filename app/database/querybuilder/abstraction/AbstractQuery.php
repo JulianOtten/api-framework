@@ -93,7 +93,7 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
         $this->binds[$type][] = $value;
     }
 
-    public function getBinds()
+    public function getBinds(): array
     {
         return array_reduce($this->binds, function ($acc, $arr) {
             return [...$acc, ...$arr];

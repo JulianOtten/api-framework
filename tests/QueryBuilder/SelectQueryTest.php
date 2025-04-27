@@ -195,4 +195,37 @@ class SelectQueryTest extends TestCase
             60, 
         ], $query->getBinds());
     }
+
+    public function testSelectQueryWithOrCondition()
+    {
+        $query = (new SelectQuery('id', 'name'))
+            ->from('users')
+            ->where(eq('status', 'active'))
+            ->and(gt('age', 18), lt('age', 60));
+
+        $expectedSql = "SELECT id, name FROM users WHERE ( status = ? ) AND ( age > ? OR age < ? )";
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([
+            'active',
+            18,
+            60, 
+        ], $query->getBinds());
+    }
+
+    public function testSelectQueryWithAndOrLogic()
+    {
+        $query = (new SelectQuery('id', 'name'))
+            ->from('users u')
+            ->where(eq('u.status', 'active'), eq('u.deleted', 0))
+            ->and(gt('u.age', 18), lt('u.age', 60));
+
+        $expectedSql = "SELECT id, name FROM users u WHERE ( u.status = ? OR u.deleted = ? ) AND ( u.age > ? OR u.age < ? )";
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([
+            'active',
+            0,
+            18,
+            60, 
+        ], $query->getBinds());
+    }
 }
