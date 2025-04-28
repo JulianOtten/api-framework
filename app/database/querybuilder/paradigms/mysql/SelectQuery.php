@@ -5,6 +5,7 @@ namespace App\Database\QueryBuilder\Paradigms\MySQL;
 use App\Database\QueryBuilder\Abstraction\AbstractQuery;
 use App\Database\QueryBuilder\Interfaces\SelectQueryInterface;
 use App\Database\QueryBuilder\Traits\GroupByTrait;
+use App\Database\QueryBuilder\Traits\HavingTrait;
 use App\Database\QueryBuilder\Traits\JoinTrait;
 use App\Database\QueryBuilder\Traits\LimitTrait;
 use App\Database\QueryBuilder\Traits\OrderByTrait;
@@ -13,6 +14,7 @@ use App\Database\QueryBuilder\Traits\WhereTrait;
 class SelectQuery extends AbstractQuery implements SelectQueryInterface
 {
     use WhereTrait;
+    use HavingTrait;
     use LimitTrait;
     use JoinTrait;
     use OrderByTrait;
@@ -33,8 +35,7 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
 
     public function columns(string|SelectQueryInterface ...$columns): SelectQueryInterface
     {
-        foreach($columns as $column) {
-
+        foreach ($columns as $column) {
             if ($column instanceof SelectQueryInterface) {
                 $this->setSubQueryBinds($column);
             }
@@ -91,6 +92,7 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
             $this->getJoins(),
             $this->getWheres(),
             $this->getGroupBy(),
+            $this->getHavings(),
             $this->getOrderBy(),
             $this->getLimit(),
         ];

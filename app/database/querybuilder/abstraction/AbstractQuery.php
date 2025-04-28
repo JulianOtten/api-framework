@@ -104,8 +104,8 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
     {
         $binds = $query->getRawBinds();
 
-        foreach($binds as $type => $values) {
-            foreach($values as $value) {
+        foreach ($binds as $type => $values) {
+            foreach ($values as $value) {
                 $this->setBind($type, $value);
             }
         }
@@ -141,21 +141,21 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
         $query = $this->build();
 
         // $query = str_replace(
-        //     array_fill(0, count($this->getBinds()), '?'), 
-        //     array_map(fn($bind) => sprintf("\"%s\"", $bind), $this->getBinds()), 
+        //     array_fill(0, count($this->getBinds()), '?'),
+        //     array_map(fn($bind) => sprintf("\"%s\"", $bind), $this->getBinds()),
         //     $query
         // );
 
         $query = preg_replace_callback(
             '/\?/', // Match any "?" placeholder
-            function($matches) {
+            function ($matches) {
                 // Get the next bind value from the list
                 static $bindIndex = 0; // Keep track of which bind we are replacing
                 $bindValue = $this->getBinds()[$bindIndex];
-        
+
                 // Increment the bind index for the next replacement
                 $bindIndex++;
-        
+
                 if (is_numeric($bindValue)) {
                     return $bindValue;
                 }

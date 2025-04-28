@@ -167,7 +167,7 @@ class SelectQueryTest extends TestCase
         $this->assertEquals([
             'active',
             18,
-            60, 
+            60,
         ], $query->getBinds());
     }
 
@@ -183,7 +183,7 @@ class SelectQueryTest extends TestCase
         $this->assertEquals([
             'active',
             18,
-            60, 
+            60,
         ], $query->getBinds());
     }
 
@@ -200,7 +200,7 @@ class SelectQueryTest extends TestCase
             'active',
             0,
             18,
-            60, 
+            60,
         ], $query->getBinds());
     }
 
@@ -335,7 +335,7 @@ class SelectQueryTest extends TestCase
     }
 
     /**
-     * The reason this should fail, is because we want to disallow as many 
+     * The reason this should fail, is because we want to disallow as many
      * sql related character as possible to make the chance of sql injection
      * as low as possible
      *

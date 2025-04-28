@@ -7,6 +7,7 @@ use App\Database\QueryBuilder\Interfaces\DeleteQueryInterface;
 use App\Database\QueryBuilder\Interfaces\InsertQueryInterface;
 use App\Database\QueryBuilder\Interfaces\QueryInterface;
 use App\Database\QueryBuilder\Interfaces\SelectQueryInterface;
+use App\Database\QueryBuilder\Interfaces\UnionQueryInterface;
 use App\Database\QueryBuilder\Interfaces\UpdateQueryInterface;
 
 class QueryBuilder implements QueryInterface
@@ -18,6 +19,11 @@ class QueryBuilder implements QueryInterface
     public function select(string|SelectQueryInterface ...$columns): SelectQueryInterface
     {
         return new SelectQuery(...$columns);
+    }
+
+    public function union(SelectQueryInterface ...$queries): UnionQueryInterface
+    {
+        return new UnionQuery(...$queries);
     }
 
     public function update(): UpdateQueryInterface

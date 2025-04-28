@@ -13,10 +13,4 @@ require_once "vendor/autoload.php";
 require_once "constants.php";
 require_once "functions/dd.php";
 
-
-$builder = QueryBuilderFactory::fromConnection();
-$builder2 = QueryBuilderFactory::fromConnection();
-
-$start = microtime(true);
-
 $app = new App();
