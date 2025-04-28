@@ -33,6 +33,6 @@ trait HavingTrait
         if (empty($this->havings)) {
             return "";
         }
-        return "WHERE " . implode(" AND ", $this->havings);
+        return "HAVING " . implode(" AND ", $this->havings);
     }
 }

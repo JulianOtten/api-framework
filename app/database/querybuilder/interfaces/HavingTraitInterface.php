@@ -6,6 +6,6 @@ use App\Database\Helpers\Condition;
 
 interface HavingTraitInterface
 {
-    public function where(Condition ...$conditions): static;
+    public function having(Condition ...$conditions): static;
     // public function and(Condition ...$conditions): static;
 }

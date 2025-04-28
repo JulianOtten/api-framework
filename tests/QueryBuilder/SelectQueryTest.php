@@ -223,17 +223,17 @@ class SelectQueryTest extends TestCase
         $this->assertEquals($expectedSql, $query->build());
     }
 
-    // public function testSelectQueryWithHavingAndGroupBy()
-    // {
-    //     $query = (new SelectQuery('status', 'COUNT(*) as count'))
-    //         ->from('users')
-    //         ->groupBy('status')
-    //         ->having(gt('count', 5));
+    public function testSelectQueryWithHavingAndGroupBy()
+    {
+        $query = (new SelectQuery('status', 'COUNT(*) as count'))
+            ->from('users')
+            ->groupBy('status')
+            ->having(gt('count', 5));
 
-    //     $expectedSql = 'SELECT status, COUNT(*) as count FROM users GROUP BY status HAVING count > ?';
-    //     $this->assertEquals($expectedSql, $query->build());
-    //     $this->assertEquals([5], $query->getBinds());
-    // }
+        $expectedSql = 'SELECT status, COUNT(*) as count FROM users GROUP BY status HAVING ( count > ? )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([5], $query->getBinds());
+    }
 
     public function testSelectQueryWithSubqueryInSelect()
     {
