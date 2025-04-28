@@ -235,6 +235,73 @@ class SelectQueryTest extends TestCase
         $this->assertEquals([5], $query->getBinds());
     }
 
+    public function testSelectQueryWithHavingAndOrderBy()
+    {
+        $query = (new SelectQuery('status', 'COUNT(*) as count'))
+            ->from('users')
+            ->groupBy('status')
+            ->having(gt('count', 5))
+            ->orderBy('count', 'DESC');
+
+        $expectedSql = 'SELECT status, COUNT(*) as count FROM users GROUP BY status HAVING ( count > ? ) ORDER BY count DESC';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([5], $query->getBinds());
+    }
+
+    public function testSelectQueryWithHavingAndLimit()
+    {
+        $query = (new SelectQuery('status', 'COUNT(*) as count'))
+            ->from('users')
+            ->groupBy('status')
+            ->having(gt('count', 5))
+            ->limit(10);
+
+        $expectedSql = 'SELECT status, COUNT(*) as count FROM users GROUP BY status HAVING ( count > ? ) LIMIT ?';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([5, 10], $query->getBinds());
+    }
+
+    public function testSelectQueryWithWhereAndHaving()
+    {
+        $query = (new SelectQuery('status', 'COUNT(*) as count'))
+            ->from('users')
+            ->where(eq('is_active', true))
+            ->groupBy('status')
+            ->having(gt('count', 5));
+
+        $expectedSql = 'SELECT status, COUNT(*) as count FROM users WHERE ( is_active = ? ) GROUP BY status HAVING ( count > ? )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([true, 5], $query->getBinds());
+    }
+
+    public function testSelectQueryWithHavingMultipleConditions()
+    {
+        $query = (new SelectQuery('status', 'COUNT(*) as count'))
+            ->from('users')
+            ->groupBy('status')
+            ->having(gt('count', 5))
+            ->having(lt('count', 20));
+
+        $expectedSql = 'SELECT status, COUNT(*) as count FROM users GROUP BY status HAVING ( count > ? ) AND ( count < ? )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([5, 20], $query->getBinds());
+    }
+
+    public function testSelectQueryWithWhereHavingOrderByAndLimit()
+    {
+        $query = (new SelectQuery('status', 'COUNT(*) as count'))
+            ->from('users')
+            ->where(eq('is_active', true))
+            ->groupBy('status')
+            ->having(gt('count', 5))
+            ->orderBy('count', 'DESC')
+            ->limit(10);
+
+        $expectedSql = 'SELECT status, COUNT(*) as count FROM users WHERE ( is_active = ? ) GROUP BY status HAVING ( count > ? ) ORDER BY count DESC LIMIT ?';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([true, 5, 10], $query->getBinds());
+    }
+
     public function testSelectQueryWithSubqueryInSelect()
     {
         $subQuery = (new SelectQuery('COUNT(*)'))
