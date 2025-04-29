@@ -11,6 +11,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Mark workspace as safe
+        run: git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+
       - uses: php-actions/composer@v6
 
       - name: Debug file structure
