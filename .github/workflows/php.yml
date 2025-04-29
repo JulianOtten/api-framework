@@ -12,7 +12,7 @@ jobs:
           fetch-depth: 0
 
       - name: Mark workspace as safe
-        run: git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+        run: git config --global --add safe.directory /app
 
       - uses: php-actions/composer@v6
 
