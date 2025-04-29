@@ -1,27 +1,23 @@
-name: Run PHP Tests
+name: CI-latest
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push]
 
 jobs:
-  test:
+  build-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
+      - uses: php-actions/composer@v6
+
+      - name: PHPUnit Tests
+        uses: php-actions/phpunit@master
+        env:
+          TEST_NAME: Scarlett
         with:
-          php-version: '8.4'
-          coverage: none
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
-
-      - name: Run tests
-        run: composer run test
+          version: 11.5
+          php_version: 8.4
+          bootstrap: vendor/autoload.php
+          configuration: phpunit.xml
+          args: --coverage-text
