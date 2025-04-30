@@ -16,6 +16,11 @@ jobs:
 
       - uses: php-actions/composer@v6
 
+      - name: Debug file structure
+        run: ls -R
+        working-directory: ${{ github.workspace }}
+
+
       - name: PHPUnit Tests
         uses: php-actions/phpunit@master
         env:
