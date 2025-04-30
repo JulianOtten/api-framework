@@ -2,9 +2,9 @@ name: CI-latest
 
 on:
     pull_request:
-        branches: ["*"]
+        branches: [master]
     push:
-        branches: ["*"]
+        branches: [master]
 
 jobs:
 
