@@ -8,7 +8,7 @@
 
     <coverage>
         <include>
-            <directory>app</directory>
+            <directory>App</directory>
         </include>
     </coverage>
 </phpunit>
