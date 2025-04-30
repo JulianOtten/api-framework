@@ -3,7 +3,7 @@
 namespace Tests\QueryBuilder;
 
 use PHPUnit\Framework\TestCase;
-use App\Database\QueryBuilder\Paradigms\Mysql\SelectQuery;
+use App\Database\QueryBuilder\Paradigms\MySQL\SelectQuery;
 
 use function App\Database\QueryBuilder\Functions\eq;
 use function App\Database\QueryBuilder\Functions\ceq;
@@ -315,20 +315,20 @@ class SelectQueryTest extends TestCase
         $this->assertEquals($expectedSql, $query->build());
     }
 
-    // public function testSelectQueryWithSubqueryInWhere()
-    // {
-    //     $subQuery = (new SelectQuery('id'))
-    //         ->from('admins')
-    //         ->where(eq('role', 'superadmin'));
+    public function testSelectQueryWithSubqueryInWhere()
+    {
+        $subQuery = (new SelectQuery('id'))
+            ->from('admins')
+            ->where(eq('role', 'superadmin'));
 
-    //     $query = (new SelectQuery('id', 'name'))
-    //         ->from('users')
-    //         ->where(in('id', $subQuery));
+        $query = (new SelectQuery('id', 'name'))
+            ->from('users')
+            ->where(in('id', $subQuery));
 
-    //     $expectedSql = 'SELECT id, name FROM users WHERE ( id IN (SELECT id FROM admins WHERE ( role = ? )) )';
-    //     $this->assertEquals($expectedSql, $query->build());
-    //     $this->assertEquals(['superadmin'], $query->getBinds());
-    // }
+        $expectedSql = 'SELECT id, name FROM users WHERE ( id IN (SELECT id FROM admins WHERE ( role = ? )) )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals(['superadmin'], $query->getBinds());
+    }
 
     public function testSelectQueryWithMultipleOrderBy()
     {
