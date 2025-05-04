@@ -9,12 +9,11 @@ interface SelectQueryInterface extends
     JoinTraitInterface,
     OrderByTraitInterface,
     GroupByTraitInterface,
-    AbstractQueryInterface
+    AbstractQueryInterface,
+    SubqueryTraitInterface
 {
-    public function __construct(string|SelectQueryInterface ...$columns);
-    public function select(string|SelectQueryInterface ...$columns): SelectQueryInterface;
+    public function __construct(string|SubqueryTraitInterface ...$columns);
+    public function select(string|SubqueryTraitInterface ...$columns): static;
 
-    public function as(string $alias): SelectQueryInterface;
-    public function isSubQuery(): SelectQueryInterface;
-    public function from(string $table): SelectQueryInterface;
+    public function from(string $table): static;
 }

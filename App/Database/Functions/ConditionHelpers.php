@@ -3,7 +3,7 @@
 namespace App\Database\QueryBuilder\Functions;
 
 use App\Database\Helpers\Condition;
-use App\Database\QueryBuilder\Interfaces\SelectQueryInterface;
+use App\Database\QueryBuilder\Interfaces\SubqueryTraitInterface;
 
 // function and(Condition ...$condition)
 // {
@@ -45,7 +45,7 @@ function cgt(string $column, string $valueColumn): Condition
     return new Condition($column, '>', $valueColumn, false);
 }
 
-function in(string $column, array|SelectQueryInterface $values): Condition
+function in(string $column, array|SubqueryTraitInterface $values): Condition
 {
     return new Condition($column, 'IN', $values, true);
 }

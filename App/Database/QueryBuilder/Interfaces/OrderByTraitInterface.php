@@ -2,7 +2,7 @@
 
 namespace App\Database\QueryBuilder\Interfaces;
 
-interface OrderByTraitInterface
+interface OrderByTraitInterface extends AbstractQueryInterface
 {
-    public function orderBy(string|SelectQueryInterface $column, string $direction = "ASC");
+    public function orderBy(string|SubqueryTraitInterface $column, string $direction = "ASC");
 }

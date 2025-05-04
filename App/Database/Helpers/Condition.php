@@ -2,7 +2,7 @@
 
 namespace App\Database\Helpers;
 
-use App\Database\QueryBuilder\Interfaces\SelectQueryInterface;
+use App\Database\QueryBuilder\Interfaces\SubqueryTraitInterface;
 
 class Condition
 {
@@ -18,7 +18,7 @@ class Condition
         $this->value = $value;
         $this->bind = $bind;
 
-        if ($value instanceof SelectQueryInterface) {
+        if ($value instanceof SubqueryTraitInterface) {
             $this->value->isSubQuery();
         }
     }
@@ -37,7 +37,7 @@ class Condition
             $bind = implode(" ", $bind);
         }
 
-        if ($this->value instanceof SelectQueryInterface) {
+        if ($this->value instanceof SubqueryTraitInterface) {
             $bind = $this->value->build();
         }
 
@@ -50,7 +50,7 @@ class Condition
 
     public function getValue(): mixed
     {
-        if ($this->value instanceof SelectQueryInterface) {
+        if ($this->value instanceof SubqueryTraitInterface) {
             return $this->value->getBinds();
         }
         return $this->value;
