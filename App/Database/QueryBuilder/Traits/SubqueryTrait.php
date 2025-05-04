@@ -7,7 +7,6 @@ use App\Database\QueryBuilder\Interfaces\QueryInterface;
 
 trait SubqueryTrait
 {
-
     protected null|string $alias = null;
     protected bool $isSubQuery = false;
 

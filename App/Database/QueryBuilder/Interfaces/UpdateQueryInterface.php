@@ -2,6 +2,6 @@
 
 namespace App\Database\QueryBuilder\Interfaces;
 
-interface UpdateQueryInterface 
+interface UpdateQueryInterface
 {
 }
