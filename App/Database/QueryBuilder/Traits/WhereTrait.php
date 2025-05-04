@@ -11,6 +11,7 @@ trait WhereTrait
 
     public function where(Condition ...$conditions): static
     {
+        // dd($conditions);
         foreach ($conditions as $condition) {
             if (!$condition->getBind()) {
                 continue;

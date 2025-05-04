@@ -12,8 +12,9 @@ interface SelectQueryInterface extends
     AbstractQueryInterface
 {
     public function __construct(string|SelectQueryInterface ...$columns);
-    public function columns(string|SelectQueryInterface ...$columns): SelectQueryInterface;
+    public function select(string|SelectQueryInterface ...$columns): SelectQueryInterface;
 
     public function as(string $alias): SelectQueryInterface;
+    public function isSubQuery(): SelectQueryInterface;
     public function from(string $table): SelectQueryInterface;
 }

@@ -22,6 +22,7 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
 
     protected string $table;
     protected null|string $alias = null;
+    protected bool $isSubQuery = false;
     protected array $columns = [];
 
     public function __construct(string|SelectQueryInterface ...$columns)
@@ -30,10 +31,10 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
             $columns = ['*'];
         }
 
-        $this->columns(...$columns);
+        $this->select(...$columns);
     }
 
-    public function columns(string|SelectQueryInterface ...$columns): SelectQueryInterface
+    public function select(string|SelectQueryInterface ...$columns): SelectQueryInterface
     {
         foreach ($columns as $column) {
             if ($column instanceof SelectQueryInterface) {
@@ -43,7 +44,7 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
 
         $columns = array_map(fn($el) => $this->sanitize($el), $columns);
 
-        $this->columns = $columns;
+        $this->columns = [...$this->columns, ...$columns];
         return $this;
     }
 
@@ -63,6 +64,18 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
     public function as(string $alias): SelectQueryInterface
     {
         $this->alias = $this->sanitize($alias);
+        $this->isSubQuery();
+        return $this;
+    }
+
+    /**
+     * Defines whether a query is a subquery, but does not require an alias to be set
+     *
+     * @return SelectQueryInterface
+     */
+    public function isSubQuery(): SelectQueryInterface
+    {
+        $this->isSubQuery = true;
         return $this;
     }
 
@@ -101,8 +114,12 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
 
         $query = implode(" {$this->getImplodeValue()}", $query);
 
+        if ($this->isSubQuery) {
+            $query = "(" . $query . ")";
+        }
+
         if ($this->alias !== null) {
-            $query = "(" . $query . ") as " . $this->alias;
+            $query = $query . " as " . $this->alias;
         }
 
         return $query;

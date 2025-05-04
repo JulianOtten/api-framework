@@ -22,6 +22,14 @@ class SelectQueryTest extends TestCase
         $this->assertEquals($expectedSql, $query->build());
     }
 
+    public function testSelectWithMultipleSelectMethodsQueryBasic()
+    {
+        $query = (new SelectQuery('id', 'name'))->select('price')->from('users');
+
+        $expectedSql = 'SELECT id, name, price FROM users';
+        $this->assertEquals($expectedSql, $query->build());
+    }
+
     public function testSelectQueryWithWhereCondition()
     {
         $query = (new SelectQuery('id', 'name'))
@@ -315,20 +323,31 @@ class SelectQueryTest extends TestCase
         $this->assertEquals($expectedSql, $query->build());
     }
 
-    // public function testSelectQueryWithSubqueryInWhere()
-    // {
-    //     $subQuery = (new SelectQuery('id'))
-    //         ->from('admins')
-    //         ->where(eq('role', 'superadmin'));
+    public function testSelectQueryWithSubqueryInWhere()
+    {
+        $subQuery = (new SelectQuery('id'))
+            ->from('admins')
+            ->where(eq('role', 'superadmin'));
 
-    //     $query = (new SelectQuery('id', 'name'))
-    //         ->from('users')
-    //         ->where(in('id', $subQuery));
+        $query = (new SelectQuery('id', 'name'))
+            ->from('users')
+            ->where(in('id', $subQuery));
 
-    //     $expectedSql = 'SELECT id, name FROM users WHERE ( id IN (SELECT id FROM admins WHERE ( role = ? )) )';
-    //     $this->assertEquals($expectedSql, $query->build());
-    //     $this->assertEquals(['superadmin'], $query->getBinds());
-    // }
+        $expectedSql = 'SELECT id, name FROM users WHERE ( id IN (SELECT id FROM admins WHERE ( role = ? )) )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals(['superadmin'], $query->getBinds());
+    }
+
+    public function testSelectQueryWithArrayInWhere()
+    {
+        $query = (new SelectQuery('id', 'name'))
+            ->from('users')
+            ->where(in('id', [1,2,8,16,32,107]));
+
+        $expectedSql = 'SELECT id, name FROM users WHERE ( id IN ( ?, ?, ?, ?, ?, ? ) )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([1,2,8,16,32,107], $query->getBinds());
+    }
 
     public function testSelectQueryWithMultipleOrderBy()
     {

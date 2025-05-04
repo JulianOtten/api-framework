@@ -90,6 +90,13 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
             throw new InvalidArgumentException("$type is not a valid bind option");
         }
 
+        if (is_array($value)) {
+            foreach($value as $val) {
+                $this->binds[$type][] = $val;
+            }
+            return;
+        }
+
         $this->binds[$type][] = $value;
     }
 
