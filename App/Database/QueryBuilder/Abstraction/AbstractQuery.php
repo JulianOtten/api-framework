@@ -91,7 +91,7 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
         }
 
         if (is_array($value)) {
-            foreach($value as $val) {
+            foreach ($value as $val) {
                 $this->binds[$type][] = $val;
             }
             return;

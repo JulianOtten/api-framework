@@ -26,21 +26,21 @@ class Condition
     public function get()
     {
         $bind = ($this->bind ? '?' : $this->value);
-        
+
         if (is_array($this->value)) {
             $bind = [
                 '(',
                 implode(', ', array_fill(0, count($this->value), '?')),
                 ')',
-            ];   
-            
+            ];
+
             $bind = implode(" ", $bind);
         }
 
         if ($this->value instanceof SelectQueryInterface) {
             $bind = $this->value->build();
         }
-        
+
         return implode(" ", [
             $this->column,
             $this->operator,
