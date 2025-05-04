@@ -704,6 +704,18 @@ class SelectQueryTest extends TestCase
         $this->assertEquals([10, 20, 30], $query->getBinds());
     }
 
+    public function testSelectQueryWithInConditionInsideJoin()
+    {
+        $query = (new SelectQuery('u.id', 'u.name', 'p.name as product_name'))
+            ->from('users u')
+            ->join('orders o', ceq('u.id', 'o.user_id'))
+            ->join('products p', ceq('o.product_id', 'p.id'), in('p.id', [1,2,3,4,5,6]));
+
+        $expectedSql = 'SELECT u.id, u.name, p.name as product_name FROM users u JOIN orders o ON u.id = o.user_id JOIN products p ON o.product_id = p.id AND p.id IN ( ?, ?, ?, ?, ?, ? )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([1,2,3,4,5,6], $query->getBinds());
+    }
+
     public function testSelectQueryWithInConditionAndGroupBy()
     {
         $query = (new SelectQuery('status', 'COUNT(*) as count'))
