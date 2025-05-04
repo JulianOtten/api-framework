@@ -644,4 +644,88 @@ class SelectQueryTest extends TestCase
         $this->assertEquals($expectedSql, $query->build());
         $this->assertEquals([50, 100], $query->getBinds());
     }
+
+    public function testSelectQueryWithSubqueryInInCondition()
+    {
+        $subQuery = (new SelectQuery('id'))
+            ->from('admins')
+            ->where(eq('role', 'manager'));
+
+        $query = (new SelectQuery('id', 'name'))
+            ->from('users')
+            ->where(in('id', $subQuery));
+
+        $expectedSql = 'SELECT id, name FROM users WHERE ( id IN (SELECT id FROM admins WHERE ( role = ? )) )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals(['manager'], $query->getBinds());
+    }
+
+    public function testSelectQueryWithJoinAndInCondition()
+    {
+        $query = (new SelectQuery('u.id', 'u.name', 'o.total'))
+            ->from('users u')
+            ->join('orders o', ceq('u.id', 'o.user_id'))
+            ->where(in('u.id', [1, 2, 3]));
+
+        $expectedSql = 'SELECT u.id, u.name, o.total FROM users u JOIN orders o ON u.id = o.user_id WHERE ( u.id IN ( ?, ?, ? ) )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([1, 2, 3], $query->getBinds());
+    }
+
+    public function testSelectQueryWithNestedInConditions()
+    {
+        $innerSubQuery = (new SelectQuery('id'))
+            ->from('admins')
+            ->where(eq('role', 'superadmin'));
+
+        $outerSubQuery = (new SelectQuery('user_id'))
+            ->from('orders')
+            ->where(in('user_id', $innerSubQuery));
+
+        $query = (new SelectQuery('id', 'name'))
+            ->from('users')
+            ->where(in('id', $outerSubQuery));
+
+        $expectedSql = 'SELECT id, name FROM users WHERE ( id IN (SELECT user_id FROM orders WHERE ( user_id IN (SELECT id FROM admins WHERE ( role = ? )) )) )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals(['superadmin'], $query->getBinds());
+    }
+
+    public function testSelectQueryWithInConditionAndMultipleJoins()
+    {
+        $query = (new SelectQuery('u.id', 'u.name', 'p.name as product_name'))
+            ->from('users u')
+            ->join('orders o', ceq('u.id', 'o.user_id'))
+            ->join('products p', ceq('o.product_id', 'p.id'))
+            ->where(in('u.id', [10, 20, 30]));
+
+        $expectedSql = 'SELECT u.id, u.name, p.name as product_name FROM users u JOIN orders o ON u.id = o.user_id JOIN products p ON o.product_id = p.id WHERE ( u.id IN ( ?, ?, ? ) )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals([10, 20, 30], $query->getBinds());
+    }
+
+    public function testSelectQueryWithInConditionAndGroupBy()
+    {
+        $query = (new SelectQuery('status', 'COUNT(*) as count'))
+            ->from('users')
+            ->where(in('status', ['active', 'inactive']))
+            ->groupBy('status');
+
+        $expectedSql = 'SELECT status, COUNT(*) as count FROM users WHERE ( status IN ( ?, ? ) ) GROUP BY status';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals(['active', 'inactive'], $query->getBinds());
+    }
+
+    public function testSelectQueryWithInConditionAndHaving()
+    {
+        $query = (new SelectQuery('status', 'COUNT(*) as count'))
+            ->from('users')
+            ->where(in('status', ['active', 'inactive']))
+            ->groupBy('status')
+            ->having(gt('count', 5));
+
+        $expectedSql = 'SELECT status, COUNT(*) as count FROM users WHERE ( status IN ( ?, ? ) ) GROUP BY status HAVING ( count > ? )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals(['active', 'inactive', 5], $query->getBinds());
+    }
 }
