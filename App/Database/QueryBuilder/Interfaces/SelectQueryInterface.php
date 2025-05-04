@@ -15,5 +15,5 @@ interface SelectQueryInterface extends
     public function __construct(string|SubqueryTraitInterface ...$columns);
     public function select(string|SubqueryTraitInterface ...$columns): static;
 
-    public function from(string $table): static;
+    public function from(string|SubqueryTraitInterface $table): static;
 }

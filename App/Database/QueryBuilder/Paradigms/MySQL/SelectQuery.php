@@ -24,8 +24,6 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
     use SubqueryTrait;
 
     protected string $table;
-    protected null|string $alias = null;
-    protected bool $isSubQuery = false;
     protected array $columns = [];
 
     public function __construct(string|SubqueryTraitInterface ...$columns)
@@ -50,8 +48,14 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
         return $this;
     }
 
-    public function from(string $table): static
+    public function from(string|SubqueryTraitInterface $table): static
     {
+        if ($table instanceof SubqueryTraitInterface) {
+            $this->setSubQueryBinds($table);
+            $this->table = $table->isSubQuery()->build();
+            return $this;
+        }
+
         $this->table = $this->sanitize($table);
 
         return $this;

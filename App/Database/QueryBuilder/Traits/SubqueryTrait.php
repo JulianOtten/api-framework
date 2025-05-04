@@ -7,6 +7,10 @@ use App\Database\QueryBuilder\Interfaces\QueryInterface;
 
 trait SubqueryTrait
 {
+
+    protected null|string $alias = null;
+    protected bool $isSubQuery = false;
+
     /**
      * Turn this query into a subquery, and set the alias for this query
      *

@@ -816,4 +816,19 @@ class SelectQueryTest extends TestCase
         $this->assertEquals($expectedSql, $query->build());
         $this->assertEquals([100, 1, 2, 3, 'inactive'], $query->getBinds());
     }
+
+    public function testSelectQueryWithSubqueryInFrom()
+    {
+        $subQuery = (new SelectQuery('id', 'name'))
+            ->from('users')
+            ->where(eq('status', 'active'));
+
+        $query = (new SelectQuery('id', 'name'))
+            ->from($subQuery->as('active_users'))
+            ->where(gt('id', 10));
+
+        $expectedSql = 'SELECT id, name FROM (SELECT id, name FROM users WHERE ( status = ? )) as active_users WHERE ( id > ? )';
+        $this->assertEquals($expectedSql, $query->build());
+        $this->assertEquals(['active', 10], $query->getBinds());
+    }
 }
