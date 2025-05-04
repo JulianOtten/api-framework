@@ -4,6 +4,7 @@ namespace App\Database\QueryBuilder\Abstraction;
 
 use App\Database\QueryBuilder\Interfaces\AbstractQueryInterface;
 use App\Database\QueryBuilder\Interfaces\SelectQueryInterface;
+use App\Database\QueryBuilder\Interfaces\SubqueryTraitInterface;
 use InvalidArgumentException;
 use Stringable;
 
@@ -55,7 +56,7 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
      * @param string $input
      * @return string
      */
-    protected function sanitize(string|SelectQueryInterface $input): string
+    protected function sanitize(string|SubqueryTraitInterface $input): string
     {
         if (gettype($input) !== "string") {
             return $input;
@@ -90,6 +91,13 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
             throw new InvalidArgumentException("$type is not a valid bind option");
         }
 
+        if (is_array($value)) {
+            foreach ($value as $val) {
+                $this->binds[$type][] = $val;
+            }
+            return;
+        }
+
         $this->binds[$type][] = $value;
     }
 
@@ -100,7 +108,7 @@ abstract class AbstractQuery implements Stringable, AbstractQueryInterface
         }, []);
     }
 
-    protected function setSubQueryBinds(SelectQueryInterface $query): void
+    protected function setSubQueryBinds(SubqueryTraitInterface $query): void
     {
         $binds = $query->getRawBinds();
 

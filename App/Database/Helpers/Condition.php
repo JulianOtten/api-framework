@@ -2,6 +2,8 @@
 
 namespace App\Database\Helpers;
 
+use App\Database\QueryBuilder\Interfaces\SubqueryTraitInterface;
+
 class Condition
 {
     protected string $column;
@@ -15,19 +17,42 @@ class Condition
         $this->operator = $operator;
         $this->value = $value;
         $this->bind = $bind;
+
+        if ($value instanceof SubqueryTraitInterface) {
+            $this->value->isSubQuery();
+        }
     }
 
     public function get()
     {
+        $bind = ($this->bind ? '?' : $this->value);
+
+        if (is_array($this->value)) {
+            $bind = [
+                '(',
+                implode(', ', array_fill(0, count($this->value), '?')),
+                ')',
+            ];
+
+            $bind = implode(" ", $bind);
+        }
+
+        if ($this->value instanceof SubqueryTraitInterface) {
+            $bind = $this->value->build();
+        }
+
         return implode(" ", [
             $this->column,
             $this->operator,
-            ($this->bind ? '?' : $this->value),
+            $bind,
         ]);
     }
 
     public function getValue(): mixed
     {
+        if ($this->value instanceof SubqueryTraitInterface) {
+            return $this->value->getBinds();
+        }
         return $this->value;
     }
 

@@ -11,4 +11,5 @@ interface QueryInterface
     public function delete(): DeleteQueryInterface;
     public function create(): CreateQueryInterface;
     public function insert(): InsertQueryInterface;
+    public function union(): UnionQueryInterface;
 }

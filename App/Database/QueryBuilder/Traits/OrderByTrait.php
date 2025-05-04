@@ -3,13 +3,14 @@
 namespace App\Database\QueryBuilder\Traits;
 
 use App\Database\QueryBuilder\Interfaces\SelectQueryInterface;
+use App\Database\QueryBuilder\Interfaces\SubqueryTraitInterface;
 use InvalidArgumentException;
 
 trait OrderByTrait
 {
     protected array $orderBy = [];
 
-    public function orderBy(string|SelectQueryInterface $column, string $direction = "ASC"): static
+    public function orderBy(string|SubqueryTraitInterface $column, string $direction = "ASC"): static
     {
         $direction = strtoupper($direction);
         if (!in_array($direction, ['ASC', 'DESC'])) {
@@ -17,7 +18,7 @@ trait OrderByTrait
         }
 
         $isSubQuery = false;
-        if ($column instanceof SelectQueryInterface) {
+        if ($column instanceof SubqueryTraitInterface) {
             $this->setSubQueryBinds($column);
             $isSubQuery = true;
         }

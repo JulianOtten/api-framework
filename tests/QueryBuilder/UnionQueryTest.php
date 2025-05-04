@@ -70,4 +70,41 @@ class UnionQueryTest extends TestCase
         $this->assertEquals($expectedSql, $union->build());
         $this->assertEquals([1, 1, 1, 5], $union->getBinds());
     }
+
+    public function testUnionQueryWithSubquery()
+    {
+        $builder = QueryBuilderFactory::fromConnection();
+
+        $subQuery = $builder->select('id', 'name')
+            ->from('users')
+            ->where(eq('status', 'active'));
+
+        $select1 = $builder->select('id', 'name')->from($subQuery->as('active_users'));
+        $select2 = $builder->select('id', 'name')->from('admins');
+
+        $union = $builder->union($select1, $select2);
+
+        $expectedSql = 'SELECT id, name FROM (SELECT id, name FROM users WHERE ( status = ? )) as active_users UNION SELECT id, name FROM admins';
+        $this->assertEquals($expectedSql, $union->build());
+        $this->assertEquals(['active'], $union->getBinds());
+    }
+
+    public function testUnionQueryWithUnionAsSubquery()
+    {
+        $builder = QueryBuilderFactory::fromConnection();
+
+        $select1 = $builder->select('id', 'name')->from('users')->where(eq('status', 'active'));
+        $select2 = $builder->select('id', 'name')->from('admins')->where(eq('role', 'manager'));
+
+        $subUnion = $builder->union($select1, $select2)->as('combined_users');
+
+        $select3 = $builder->select('id', 'name')->from($subUnion);
+        $select4 = $builder->select('id', 'name')->from('guests');
+
+        $union = $builder->union($select3, $select4);
+
+        $expectedSql = 'SELECT id, name FROM (SELECT id, name FROM users WHERE ( status = ? ) UNION SELECT id, name FROM admins WHERE ( role = ? )) as combined_users UNION SELECT id, name FROM guests';
+        $this->assertEquals($expectedSql, $union->build());
+        $this->assertEquals(['active', 'manager'], $union->getBinds());
+    }
 }

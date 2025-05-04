@@ -5,39 +5,40 @@ namespace App\Database\QueryBuilder\Traits;
 use App\Database\Helpers\Condition;
 use App\Database\Helpers\Join;
 use App\Database\QueryBuilder\Interfaces\SelectQueryInterface;
+use App\Database\QueryBuilder\Interfaces\SubqueryTraitInterface;
 
 trait JoinTrait
 {
     protected array $joins = [];
 
-    public function join(string|SelectQueryInterface $table, Condition ...$conditions)
+    public function join(string|SubqueryTraitInterface $table, Condition ...$conditions)
     {
         return $this->setJoin('JOIN', $table, ...$conditions);
     }
 
-    public function leftJoin(string|SelectQueryInterface $table, Condition ...$conditions)
+    public function leftJoin(string|SubqueryTraitInterface $table, Condition ...$conditions)
     {
         return $this->setJoin('LEFT JOIN', $table, ...$conditions);
     }
 
-    public function rightJoin(string|SelectQueryInterface $table, Condition ...$conditions)
+    public function rightJoin(string|SubqueryTraitInterface $table, Condition ...$conditions)
     {
         return $this->setJoin('RIGHT JOIN', $table, ...$conditions);
     }
 
-    public function innerJoin(string|SelectQueryInterface $table, Condition ...$conditions)
+    public function innerJoin(string|SubqueryTraitInterface $table, Condition ...$conditions)
     {
         return $this->setJoin('INNER JOIN', $table, ...$conditions);
     }
 
-    public function outerJoin(string|SelectQueryInterface $table, Condition ...$conditions)
+    public function outerJoin(string|SubqueryTraitInterface $table, Condition ...$conditions)
     {
         return $this->setJoin('OUTER JOIN', $table, ...$conditions);
     }
 
-    protected function setJoin(string $joinType, string|SelectQueryInterface $table, Condition ...$conditions)
+    protected function setJoin(string $joinType, string|SubqueryTraitInterface $table, Condition ...$conditions)
     {
-        if ($table instanceof SelectQueryInterface) {
+        if ($table instanceof SubqueryTraitInterface) {
             $this->setSubQueryBinds($table);
         }
 

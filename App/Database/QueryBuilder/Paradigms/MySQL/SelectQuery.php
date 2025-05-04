@@ -9,6 +9,8 @@ use App\Database\QueryBuilder\Traits\HavingTrait;
 use App\Database\QueryBuilder\Traits\JoinTrait;
 use App\Database\QueryBuilder\Traits\LimitTrait;
 use App\Database\QueryBuilder\Traits\OrderByTrait;
+use App\Database\QueryBuilder\Traits\SubqueryTrait;
+use App\Database\QueryBuilder\Interfaces\SubqueryTraitInterface;
 use App\Database\QueryBuilder\Traits\WhereTrait;
 
 class SelectQuery extends AbstractQuery implements SelectQueryInterface
@@ -19,63 +21,44 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
     use JoinTrait;
     use OrderByTrait;
     use GroupByTrait;
+    use SubqueryTrait;
 
     protected string $table;
-    protected null|string $alias = null;
     protected array $columns = [];
 
-    public function __construct(string|SelectQueryInterface ...$columns)
+    public function __construct(string|SubqueryTraitInterface ...$columns)
     {
         if (count($columns) == 0) {
             $columns = ['*'];
         }
 
-        $this->columns(...$columns);
+        $this->select(...$columns);
     }
-
-    public function columns(string|SelectQueryInterface ...$columns): SelectQueryInterface
+    public function select(string|SubqueryTraitInterface ...$columns): static
     {
         foreach ($columns as $column) {
-            if ($column instanceof SelectQueryInterface) {
+            if ($column instanceof SubqueryTraitInterface) {
                 $this->setSubQueryBinds($column);
             }
         }
 
         $columns = array_map(fn($el) => $this->sanitize($el), $columns);
 
-        $this->columns = $columns;
+        $this->columns = [...$this->columns, ...$columns];
         return $this;
     }
 
-    public function from(string $table): SelectQueryInterface
+    public function from(string|SubqueryTraitInterface $table): static
     {
+        if ($table instanceof SubqueryTraitInterface) {
+            $this->setSubQueryBinds($table);
+            $this->table = $table->isSubQuery()->build();
+            return $this;
+        }
+
         $this->table = $this->sanitize($table);
 
         return $this;
-    }
-
-    /**
-     * Turn this query into a subquery, and set the alias for this query
-     *
-     * @param string $as
-     * @return SelectQueryInterface
-     */
-    public function as(string $alias): SelectQueryInterface
-    {
-        $this->alias = $this->sanitize($alias);
-        return $this;
-    }
-
-    /**
-     * Same as `as()`, but with a clearer name.
-     * `as()` can be used in a more readable syntax, while `alias()` is semantically more correct
-     *
-     * @param string $alias
-     * @return SelectQueryInterface
-     */
-    public function alias(string $alias): SelectQueryInterface
-    {
-        return $this->as($alias);
     }
 
     public function build(): string
@@ -101,9 +84,7 @@ class SelectQuery extends AbstractQuery implements SelectQueryInterface
 
         $query = implode(" {$this->getImplodeValue()}", $query);
 
-        if ($this->alias !== null) {
-            $query = "(" . $query . ") as " . $this->alias;
-        }
+        $query = $this->buildAsSubquery($query);
 
         return $query;
     }
