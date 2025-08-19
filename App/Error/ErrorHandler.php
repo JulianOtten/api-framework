@@ -43,7 +43,7 @@ class ErrorHandler
         );
 
         $response->send();
-
+        exit;
         return true;
     }
 

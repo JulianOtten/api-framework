@@ -9,6 +9,7 @@ use App\Http\Response;
 use App\Http\ResponseFactory;
 use App\Resources\Interfaces\ResourceRoutesInterface;
 use App\Routing\Exceptions\HttpException;
+use App\Routing\Middleware\MiddlewareInterface;
 
 class Router
 {
@@ -36,7 +37,6 @@ class Router
         foreach ($reflectionClass->getMethods() as $method) {
             $methodName = $method->getName();
             $path = $method->getAttributes('App\Routing\Attributes\Path')[0]->newInstance();
-            ;
 
             $uri = sprintf(
                 "/%s/%s/",
@@ -46,7 +46,18 @@ class Router
 
             $uri = rtrim($uri, '/');
 
-            $routes[] = new Route($uri, [$reflectionClass->newInstance(), $methodName], $path->getMethod());
+            $route = new Route($uri, [$reflectionClass->newInstance(), $methodName], $path->getMethod());
+
+            $attributes = $method->getAttributes();
+
+            foreach ($attributes as $attribute) {
+                $instance = $attribute->newInstance();
+                if ($instance instanceof MiddlewareInterface) {
+                    $route->addMiddleware($instance);
+                }
+            }
+
+            $routes[] = $route; 
         }
 
         return $routes;

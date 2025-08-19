@@ -4,6 +4,8 @@ namespace App\Routing;
 
 use App\Http\Method;
 use App\Http\Request;
+use App\Routing\Middleware\Middleware;
+use App\Routing\Middleware\MiddlewareInterface;
 use Exception;
 
 class Route
@@ -11,12 +13,18 @@ class Route
     private $path = null;
     private $callback = null;
     private $method = null;
+    private $middleware = [];
 
     public function __construct(string $path, callable $callback, Method $method)
     {
         $this->path = $path;
         $this->callback = $callback;
         $this->method = $method;
+    }
+
+    public function addMiddleware(MiddlewareInterface $middleware)
+    {
+        $this->middleware[] = $middleware;
     }
 
     public function getPath(): string
@@ -31,6 +39,13 @@ class Route
 
     public function run(...$args)
     {
+        foreach($this->middleware as $middleware) {
+            $valid = $middleware->run();
+            if (!$valid) {
+                return false;
+            }
+        }
+
         $args = [...$args, ...array_values($this->getVariables())];
         return call_user_func($this->callback, ...$args);
     }

@@ -102,7 +102,7 @@ class Message implements MessageInterface
             $key = substr($key, 5);
         }
 
-        return str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', $key))));
+        return str_replace(' ', '-', strtolower(str_replace('_', ' ', $key)));
     }
 
     private function createHeaders()

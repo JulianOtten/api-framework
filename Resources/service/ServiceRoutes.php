@@ -6,6 +6,7 @@ use App\Http\Method;
 use App\Resources\Interfaces\ResourceRoutesInterface;
 use App\Routing\Attributes\Path;
 use App\Routing\Attributes\PathGroup;
+use App\Routing\Middleware\AuthenticatedMiddleware;
 use App\Routing\Exceptions\NotFoundException;
 use Resources\Service\ServiceModal;
 
@@ -22,6 +23,7 @@ class ServiceRoutes implements ResourceRoutesInterface
     }
 
     #[Path('/{id}', Method::Get)]
+    #[AuthenticatedMiddleware()]
     public function get($id)
     {
         $modal = new ServiceModal();
