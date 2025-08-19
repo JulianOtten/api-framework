@@ -26,11 +26,15 @@
     "autoload": {
         "psr-4": {
             "App\\": "App/",
-            "Resources\\": "Resources/",
-            "Tests\\": "tests/"
+            "Resources\\": "Resources/"
         },
         "files": [
             "App/Database/Functions/ConditionHelpers.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     }
 }

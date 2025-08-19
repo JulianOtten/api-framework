@@ -6,7 +6,9 @@ use App\Http\HttpStatus;
 use App\Http\Method;
 use App\Http\Request;
 use App\Http\Response;
+use App\Http\ResponseFactory;
 use App\Resources\Interfaces\ResourceRoutesInterface;
+use App\Routing\Exceptions\HttpException;
 
 class Router
 {
@@ -64,12 +66,43 @@ class Router
 
         foreach ($this->routes as $route) {
             if ($route->match($method)) {
-                $route->run();
-                return;
+                try {
+                    $response = $route->run();
+
+                    $body = "";
+                    if (is_array($response)) {
+                        $body = json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+                    }
+
+                    $response = ResponseFactory::createResponse($body, HttpStatus::OK);
+                    $response->send();
+                    return;
+                } catch (\Exception $e) {
+                    $this->handleException($e);
+                    return;
+                }
             }
         }
 
         self::notFound();
+    }
+
+    protected function handleException(HttpException $exception): void
+    {
+        $statusCode = HttpStatus::tryFrom($exception->getCode()) ?? HttpStatus::INTERNAL_SERVER_ERROR;
+
+        $body = $exception->getData();
+
+        if (is_array($body)) {
+            $body = json_encode($body, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        }
+
+        if (empty($body)) {
+            $body = "";
+        }
+
+        $response = ResponseFactory::createResponse($body, $statusCode);
+        $response->send();
     }
 
     protected static function notFound()

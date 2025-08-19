@@ -26,6 +26,8 @@ class Env
             'MYSQL_DATABASE',
             'MYSQL_USER',
             'MYSQL_PASSWORD',
+            'MYSQL_HOST',
+            // 'MYSQL_PORT',
         ])
         ->notEmpty();
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Resources\Ingredient;
+namespace Resources\Client;
 
 use App\Resources\Interfaces\ResourceSeederInterface;
 
-class IngredientSeeder implements ResourceSeederInterface
+class ClientSeeder implements ResourceSeederInterface
 {
     public function create()
     {
