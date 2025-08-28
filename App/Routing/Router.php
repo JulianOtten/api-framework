@@ -10,6 +10,7 @@ use App\Http\ResponseFactory;
 use App\Resources\Interfaces\ResourceRoutesInterface;
 use App\Routing\Exceptions\HttpException;
 use App\Routing\Middleware\MiddlewareInterface;
+use Exception;
 
 class Router
 {
@@ -34,6 +35,8 @@ class Router
 
         $group = $reflectionClass->getAttributes('App\Routing\Attributes\PathGroup')[0]->newInstance();
 
+        $attributes = $reflectionClass->getAttributes();
+
         foreach ($reflectionClass->getMethods() as $method) {
             $methodName = $method->getName();
             $path = $method->getAttributes('App\Routing\Attributes\Path')[0]->newInstance();
@@ -48,7 +51,7 @@ class Router
 
             $route = new Route($uri, [$reflectionClass->newInstance(), $methodName], $path->getMethod());
 
-            $attributes = $method->getAttributes();
+            $attributes = [...$attributes, ...$method->getAttributes()];
 
             foreach ($attributes as $attribute) {
                 $instance = $attribute->newInstance();
@@ -88,8 +91,13 @@ class Router
                     $response = ResponseFactory::createResponse($body, HttpStatus::OK);
                     $response->send();
                     return;
-                } catch (\Exception $e) {
+                } catch (HttpException $e) {
                     $this->handleException($e);
+                    return;
+                } 
+                catch (Exception $e) {
+                    $response = ResponseFactory::createResponse((string) $e, HttpStatus::INTERNAL_SERVER_ERROR);
+                    $response->send();
                     return;
                 }
             }
@@ -103,6 +111,12 @@ class Router
         $statusCode = HttpStatus::tryFrom($exception->getCode()) ?? HttpStatus::INTERNAL_SERVER_ERROR;
 
         $body = $exception->getData();
+
+        if (is_string($body)) {
+            $body = [
+                'error' => $body,
+            ];
+        }
 
         if (is_array($body)) {
             $body = json_encode($body, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);

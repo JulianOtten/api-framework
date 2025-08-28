@@ -3,6 +3,8 @@
 namespace App\Database;
 
 use App\Database\QueryBuilder\Interfaces\AbstractQueryInterface;
+use App\Database\QueryBuilder\Paradigms\MySQL\QueryBuilder;
+use App\Database\QueryBuilder\QueryBuilderFactory;
 use PDO;
 use PDOStatement;
 
@@ -55,5 +57,10 @@ class Database
     public function getPdo(): PDO
     {
         return $this->pdo;
+    }
+
+    public static function builder(): QueryBuilder
+    {
+        return QueryBuilderFactory::fromConnection();
     }
 }
